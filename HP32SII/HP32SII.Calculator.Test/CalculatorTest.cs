@@ -2,13 +2,8 @@
 
 namespace HP32SII.Calculator.Test
 {
-    [TestFixture]
     public class CalculatorTest
     {
-        [Test]
-        public void TestAlive()
-        {
-            //var calculator = new Calculator();
-        }
+
     }
 }
