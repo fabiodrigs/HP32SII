@@ -2,6 +2,6 @@
 {
     public sealed class Calculator
 	{
-
-	}
+        public double LastX { get; private set; }
+    }
 }

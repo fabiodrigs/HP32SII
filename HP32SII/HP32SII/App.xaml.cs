@@ -12,7 +12,6 @@ namespace HP32SII
         public App()
         {
             InitializeComponent();
-
             MainPage = new HP32SII.MainPage();
         }
 
