@@ -12,7 +12,10 @@ namespace HP32SII
         public MainPage()
         {
             InitializeComponent();
-            var calculator = new HP32SII.Calculator.Calculator();
+            var viewModel = new MainPageViewModel();
+            BindingContext = viewModel;
+
+            var calculator = new Calculator.Calculator();
         }
     }
 }
