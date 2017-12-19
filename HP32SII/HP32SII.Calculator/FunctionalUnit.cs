@@ -59,6 +59,5 @@ namespace HP32SII.Calculator
             var range = Enumerable.Range(1, n);
             return (double) range.Aggregate((a, b) => a * b);
         }
-
     }
 }

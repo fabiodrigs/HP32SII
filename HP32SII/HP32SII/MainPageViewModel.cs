@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+using System;
 using System.Windows.Input;
 using Xamarin.Forms;
 
@@ -6,21 +7,52 @@ namespace HP32SII
 {
     public class MainPageViewModel : ViewModelBase
     {
-        private string entryText = "";
-        public string EntryText
+        private Calculator.Calculator calculator = new Calculator.Calculator();
+
+        private string topStatus = "";
+        public string TopStatus
         {
             get
             {
-                return entryText;
+                return topStatus;
             }
             set
             {
-                entryText = value;
-                RaisePropertyChanged(nameof(EntryText));
+                topStatus = value;
+                RaisePropertyChanged(nameof(TopStatus));
+            }
+        }
+
+        private string bottomStatus = "";
+        public string BottomStatus
+        {
+            get
+            {
+                return bottomStatus;
+            }
+            set
+            {
+                bottomStatus = value;
+                RaisePropertyChanged(nameof(BottomStatus));
+            }
+        }
+
+        private string display = " 0";
+        public string Display
+        {
+            get
+            {
+                return display;
+            }
+            set
+            {
+                display = value;
+                RaisePropertyChanged(nameof(Display));
             }
         }
 
         public ICommand EnterCommand { get; private set; }
+        public ICommand ChangeSignCommand { get; private set; }
         public ICommand NumericCommand { get; private set; }
         public ICommand ClearCommand { get; private set; }
         public ICommand DivideCommand { get; private set; }
@@ -32,6 +64,7 @@ namespace HP32SII
         public MainPageViewModel()
         {
             EnterCommand = new Command(HandleEnterKey);
+            ChangeSignCommand = new Command(HandleChangeSign);
             NumericCommand = new Command<string>(HandleNumericKey);
             ClearCommand = new Command(HandleClearKey);
             DivideCommand = new Command(HandleDivide);
@@ -43,42 +76,88 @@ namespace HP32SII
 
         private void HandleEnterKey()
         {
-            EntryText = "Enter key pressed";
+            calculator.Push(Convert.ToDouble(Display.Replace(" ", "").Replace("_", "")));
+            if (Display[Display.Length - 1] == '_')
+            {
+                Display = Display.Remove(Display.Length - 1);
+            }
+        }
+
+        private void HandleChangeSign()
+        {
+            if (Convert.ToDouble(Display.Replace(" ", "").Replace("_", "")) != 0.0)
+            {
+                Display = (Display[0] == ' ' ? '-' : ' ') + Display.Substring(1);
+            }
         }
 
         private void HandleNumericKey(string number)
         {
-            EntryText += number;
+            if (Display.Length < 13)
+            {
+                if (Display.Length == 2 && Display[1] == '0' || Display[Display.Length - 1] == '_')
+                {
+                    Display = Display.Remove(Display.Length - 1);
+                    Display += number + '_';
+                }
+                else
+                {
+                    Display = " " + number + "_";
+                }
+            }
         }
 
         private void HandleClearKey()
         {
-            EntryText = "";
+            Display = " 0";
         }
 
         private void HandleBackspace()
         {
-            EntryText = EntryText.Remove(EntryText.Length - 1);
+            if (Display.Length > 2)
+            {
+                if (Display.Length == 3)
+                {
+                    Display = " 0";
+                }
+                else if (Display[Display.Length - 1] == '_')
+                {
+                    Display = Display.Remove(Display.Length - 2);
+                    Display += '_';                    
+                }
+                else
+                {
+                    Display = " 0";
+                }
+            }
         }
 
         private void HandleDivide()
         {
-
+            var number = Convert.ToDouble(Display.Replace(" ", "").Replace("_", ""));
+            var result = calculator.Divide(number).ToString();
+            Display = (result[0] == '-' ? "" : " ") + result;
         }
 
         private void HandleMultiply()
         {
-
+            var number = Convert.ToDouble(Display.Replace(" ", "").Replace("_", ""));
+            var result = calculator.Multiply(number).ToString();
+            Display = (result[0] == '-' ? "" : " ") + result;
         }
 
         private void HandleSubtract()
         {
-
+            var number = Convert.ToDouble(Display.Replace(" ", "").Replace("_", ""));
+            var result = calculator.Subtract(number).ToString();
+            Display = (result[0] == '-' ? "" : " ") + result;
         }
 
         private void HandleAdd()
         {
-
+            var number = Convert.ToDouble(Display.Replace(" ", "").Replace("_", ""));
+            var result = calculator.Add(number).ToString();
+            Display = (result[0] == '-' ? "" : " ") + result;
         }
     }
 }

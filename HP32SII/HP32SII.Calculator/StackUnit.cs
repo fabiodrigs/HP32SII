@@ -49,9 +49,9 @@ namespace HP32SII.Calculator
             stack.Push(x);
         }
 
-        private double Pop()
+        public void Clear()
         {
-            return stack.Count == 0 ? 0.0 : stack.Pop();
+            stack.Clear();
         }
 
         public double Peek()
@@ -59,10 +59,11 @@ namespace HP32SII.Calculator
             return stack.Peek();
         }
 
-        public void Clear()
+        private double Pop()
         {
-            stack.Clear();
+            return stack.Count == 0 ? 0.0 : stack.Pop();
         }
+
         #endregion
     }
 }

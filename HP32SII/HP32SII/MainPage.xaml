@@ -33,9 +33,9 @@
                     <ColumnDefinition Width="20*"/>
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
-                <Label Grid.Row="0" Grid.Column="1" Text="ENTRY 1" FontSize="Micro" FontAttributes="Bold" />
-                <Label Grid.Row="1" Grid.Column="1" Text="{Binding EntryText}" FontSize="Large" FontAttributes="Bold, Italic" />
-                <Label Grid.Row="2" Grid.Column="1" Text="ENTRY 3" FontSize="Micro" FontAttributes="Bold"  />
+                <Label Grid.Row="0" Grid.Column="1" Text="{Binding TopStatus}" FontSize="Micro" FontAttributes="Bold" />
+                <Label Grid.Row="1" Grid.Column="1" Text="{Binding Display}" FontSize="Large" FontAttributes="Bold, Italic" />
+                <Label Grid.Row="2" Grid.Column="1" Text="{Binding BottomStatus}" FontSize="Micro" FontAttributes="Bold" />
             </Grid>
             <!--Top keyboard-->
             <Grid Grid.Row="3" Grid.Column="1">
@@ -69,7 +69,7 @@
                 <!--Third line-->
                 <Button x:Name="Enter" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Command="{Binding EnterCommand}"/>
                 <Button Grid.Row="2" Grid.Column="2" />
-                <Button Grid.Row="2" Grid.Column="3" />
+                <Button Grid.Row="2" Grid.Column="3" Command="{Binding ChangeSignCommand}"/>
                 <Button Grid.Row="2" Grid.Column="4" />
                 <Button Grid.Row="2" Grid.Column="5" Command="{Binding BackspaceCommand}"/>
             </Grid>
