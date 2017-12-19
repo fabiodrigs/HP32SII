@@ -27,6 +27,7 @@ namespace HP32SII
         public ICommand MultiplyCommand { get; private set; }
         public ICommand SubtractCommand { get; private set; }
         public ICommand AddCommand { get; private set; }
+        public ICommand BackspaceCommand { get; private set; }
 
         public MainPageViewModel()
         {
@@ -37,6 +38,7 @@ namespace HP32SII
             MultiplyCommand = new Command(HandleMultiply);
             SubtractCommand = new Command(HandleSubtract);
             AddCommand = new Command(HandleAdd);
+            BackspaceCommand = new Command(HandleBackspace);
         }
 
         private void HandleEnterKey()
@@ -52,6 +54,11 @@ namespace HP32SII
         private void HandleClearKey()
         {
             EntryText = "";
+        }
+
+        private void HandleBackspace()
+        {
+            EntryText = EntryText.Remove(EntryText.Length - 1);
         }
 
         private void HandleDivide()
@@ -73,7 +80,5 @@ namespace HP32SII
         {
 
         }
-
-
     }
 }
