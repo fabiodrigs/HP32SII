@@ -1,0 +1,117 @@
+﻿<Window x:Class="HP32SII.Wpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HP32SII.Wpf"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="500" Width="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="11.5*" />
+            <RowDefinition Height="12*" />
+            <RowDefinition Height="11.5*" />
+            <RowDefinition Height="27*" />
+            <RowDefinition Height="36*" />
+            <RowDefinition Height="5*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="100*"/>
+            <ColumnDefinition Width="5*"/>
+        </Grid.ColumnDefinitions>
+
+        <!--Display-->
+        <Grid Grid.Row="1" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2.5*"/>
+                <RowDefinition Height="10*"/>
+                <RowDefinition Height="2.5*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="20*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Row="0" Grid.Column="1" Content="{Binding TopStatus}" />
+            <Label Grid.Row="1" Grid.Column="1" Content="{Binding Display}" FontSize="20" FontFamily="Monospace" FontWeight="Bold" FontStyle="Italic" />
+            <Label Grid.Row="2" Grid.Column="1" Content="{Binding BottomStatus}" />
+        </Grid>
+        <!--Top keyboard-->
+        <Grid Grid.Row="3" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <!--First line-->
+            <Button Content="SQRT" Grid.Row="0" Grid.Column="0" />
+            <Button Content="EXP" Grid.Row="0" Grid.Column="1" />
+            <Button Content="LN" Grid.Row="0" Grid.Column="2" />
+            <Button Content="POW" Grid.Row="0" Grid.Column="3" />
+            <Button Content="1/x" Grid.Row="0" Grid.Column="4" />
+            <Button Content="SUM" Grid.Row="0" Grid.Column="5" />
+            <!--Second line-->
+            <Button Content="STO" Grid.Row="1" Grid.Column="0" />
+            <Button Content="RCL" Grid.Row="1" Grid.Column="1" />
+            <Button Content="R" Grid.Row="1" Grid.Column="2" />
+            <Button Content="SIN" Grid.Row="1" Grid.Column="3" />
+            <Button Content="COS" Grid.Row="1" Grid.Column="4" />
+            <Button Content="TAN" Grid.Row="1" Grid.Column="5" />
+            <!--Third line-->
+            <Button Content="ENTER" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Command="{Binding EnterCommand}"/>
+            <Button Content="SWAP" Grid.Row="2" Grid.Column="2" />
+            <Button Content="+/-" Grid.Row="2" Grid.Column="3" Command="{Binding ChangeSignCommand}"/>
+            <Button Content="E" Grid.Row="2" Grid.Column="4" />
+            <Button Content="CLEAR" Grid.Row="2" Grid.Column="5" Command="{Binding BackspaceCommand}"/>
+        </Grid>
+        <!--Bottom keyboard-->
+        <Grid Grid.Row="4" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <!--First line-->
+            <Button Content="XEQ" Grid.Row="0" Grid.Column="0" />
+            <Button Content="7" Grid.Row="0" Grid.Column="1" Command="{Binding NumericCommand}" CommandParameter="7"/>
+            <Button Content="8" Grid.Row="0" Grid.Column="2" Command="{Binding NumericCommand}" CommandParameter="8"/>
+            <Button Content="9" Grid.Row="0" Grid.Column="3" Command="{Binding NumericCommand}" CommandParameter="9"/>
+            <Button Content="/" Grid.Row="0" Grid.Column="4" Command="{Binding DivideCommand}" />
+            <!--Second line-->
+            <Button Content="LEFT" Grid.Row="1" Grid.Column="0" />
+            <Button Content="4" Grid.Row="1" Grid.Column="1" Command="{Binding NumericCommand}" CommandParameter="4"/>
+            <Button Content="5" Grid.Row="1" Grid.Column="2" Command="{Binding NumericCommand}" CommandParameter="5"/>
+            <Button Content="6" Grid.Row="1" Grid.Column="3" Command="{Binding NumericCommand}" CommandParameter="6"/>
+            <Button Content="*" Grid.Row="1" Grid.Column="4" Command="{Binding MultipleCommand}" />
+            <!--Third line-->
+            <Button Content="RIGHT" Grid.Row="2" Grid.Column="0" />
+            <Button Content="1" Grid.Row="2" Grid.Column="1" Command="{Binding NumericCommand}" CommandParameter="1"/>
+            <Button Content="2" Grid.Row="2" Grid.Column="2" Command="{Binding NumericCommand}" CommandParameter="2"/>
+            <Button Content="3" Grid.Row="2" Grid.Column="3" Command="{Binding NumericCommand}" CommandParameter="3"/>
+            <Button Content="-" Grid.Row="2" Grid.Column="4" Command="{Binding SubtractCommand}" />
+            <!--Fourth line-->
+            <Button Content="C" Grid.Row="3" Grid.Column="0" Command="{Binding ClearCommand}" />
+            <Button Content="0" Grid.Row="3" Grid.Column="1" Command="{Binding NumericCommand}" CommandParameter="0"/>
+            <Button Content="." Grid.Row="3" Grid.Column="2" Command="{Binding NumericCommand}" CommandParameter="."/>
+            <Button Content="R/S" Grid.Row="3" Grid.Column="3" />
+            <Button Content="+" Grid.Row="3" Grid.Column="4" Command="{Binding AddCommand}" />
+        </Grid>
+    </Grid>
+</Window>
