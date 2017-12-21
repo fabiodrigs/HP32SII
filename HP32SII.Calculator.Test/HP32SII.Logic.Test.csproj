@@ -49,6 +49,7 @@
     <Compile Include="CalculatorTest.cs" />
     <Compile Include="ConversionUnitTest.cs" />
     <Compile Include="FunctionalUnitTest.cs" />
+    <Compile Include="OutputTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StackUnitTest.cs" />
     <Compile Include="StorageUnitTest.cs" />

@@ -4,7 +4,6 @@
 
 namespace HP32SII.Logic
 {
-
     public sealed class Calculator
 	{
         public double LastX { get; private set; }
