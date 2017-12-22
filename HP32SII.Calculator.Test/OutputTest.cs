@@ -25,36 +25,70 @@ namespace HP32SII.Logic.Test
             Assert.That(output.ToDouble(), Is.EqualTo(0.0));
         }
         #endregion
-        #region Append()
+        #region AppendDigit()
 
         [Test]
-        public void TestAppendEditable()
+        public void TestAppendDigitEditable()
         {
             output.FromString(" 123_");
-            output.Append("4");
+            output.AppendDigit("4");
 
             Assert.That(output.ToString(), Is.EqualTo(" 1234_"));
             Assert.That(output.ToDouble(), Is.EqualTo(1234.0));
         }
 
         [Test]
-        public void TestAppendEditableMax()
+        public void TestAppendDigitEditableMax()
         {
             output.FromString(" 123456789012_");
-            output.Append("3");
+            output.AppendDigit("3");
 
             Assert.That(output.ToString(), Is.EqualTo(" 123456789012_"));
             Assert.That(output.ToDouble(), Is.EqualTo(123456789012.0));
         }
 
         [Test]
-        public void TestAppendFrozen()
+        public void TestAppendDigitFrozen()
         {
             output.FromString(" 123");
-            output.Append("4");
+            output.AppendDigit("4");
 
             Assert.That(output.ToString(), Is.EqualTo(" 4_"));
             Assert.That(output.ToDouble(), Is.EqualTo(4.0));
+        }
+
+        #endregion
+        #region AppendDot()
+
+        [Test]
+        public void TestAppendDotEditable()
+        {
+            output.FromString(" 123_");
+            output.AppendDot();
+
+            Assert.That(output.ToString(), Is.EqualTo(" 123._"));
+            Assert.That(output.ToDouble(), Is.EqualTo(123.0));
+        }
+
+        [Test]
+        public void TestAppendDotFrozen()
+        {
+            output.FromString(" 123");
+            output.AppendDot();
+
+            Assert.That(output.ToString(), Is.EqualTo(" 0._"));
+            Assert.That(output.ToDouble(), Is.EqualTo(0.0));
+        }
+
+
+        [Test]
+        public void TestAppendDotAlreadyDot()
+        {
+            output.FromString(" 12.3_");
+            output.AppendDot();
+
+            Assert.That(output.ToString(), Is.EqualTo(" 12.3_"));
+            Assert.That(output.ToDouble(), Is.EqualTo(12.3));
         }
 
         #endregion

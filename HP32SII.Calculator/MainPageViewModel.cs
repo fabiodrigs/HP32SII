@@ -56,6 +56,7 @@ namespace HP32SII.Logic
         public ICommand EnterCommand { get; private set; }
         public ICommand ChangeSignCommand { get; private set; }
         public ICommand NumericCommand { get; private set; }
+        public ICommand DotCommand { get; private set; }
         public ICommand ClearCommand { get; private set; }
         public ICommand DivideCommand { get; private set; }
         public ICommand MultiplyCommand { get; private set; }
@@ -69,6 +70,7 @@ namespace HP32SII.Logic
             EnterCommand = new Command(HandleEnterKey);
             ChangeSignCommand = new Command(HandleChangeSign);
             NumericCommand = new Command<string>(HandleNumericKey);
+            DotCommand = new Command(HandleDot);
             ClearCommand = new Command(HandleClearKey);
             DivideCommand = new Command(HandleDivide);
             MultiplyCommand = new Command(HandleMultiply);
@@ -103,7 +105,18 @@ namespace HP32SII.Logic
                 calculator.Push(output.ToDouble());
                 pushAtNextAppend = false;
             }
-            output.Append(digit);
+            output.AppendDigit(digit);
+            Display = output.ToString();
+        }
+
+        private void HandleDot()
+        {
+            if (pushAtNextAppend)
+            {
+                calculator.Push(output.ToDouble());
+                pushAtNextAppend = false;
+            }
+            output.AppendDot();
             Display = output.ToString();
         }
 

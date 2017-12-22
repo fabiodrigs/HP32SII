@@ -12,6 +12,7 @@ namespace HP32SII.Logic
         private const string EditableSuffix = "_";
         private const string FrozenSuffix = "";
         private const string DefaultNumber = "0";
+        private const string Dot = ".";
 
         private const int MaxNumberLength = 12;
 
@@ -31,7 +32,7 @@ namespace HP32SII.Logic
             number = DefaultNumber;
         }
 
-        public void Append(string digit)
+        public void AppendDigit(string digit)
         {
             if (IsEditable)
             {
@@ -45,6 +46,23 @@ namespace HP32SII.Logic
                 IsPositive = true;
                 IsEditable = true;
                 number = digit;
+            }
+        }
+
+        public void AppendDot()
+        {
+            if (IsEditable)
+            {
+                if (!number.Contains("."))
+                {
+                    number += Dot;
+                }
+            }
+            else
+            {
+                IsPositive = true;
+                IsEditable = true;
+                number = DefaultNumber + Dot;
             }
         }
 
