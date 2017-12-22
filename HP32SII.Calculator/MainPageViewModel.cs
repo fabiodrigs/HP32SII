@@ -8,6 +8,8 @@ namespace HP32SII.Logic
     public class MainPageViewModel : ViewModelBase
     {
         private Calculator calculator = new Calculator();
+        private Output output = new Output();
+        private bool pushAtNextAppend = false;
 
         private string topStatus = "";
         public string TopStatus
@@ -60,6 +62,7 @@ namespace HP32SII.Logic
         public ICommand SubtractCommand { get; private set; }
         public ICommand AddCommand { get; private set; }
         public ICommand BackspaceCommand { get; private set; }
+        public ICommand SwapCommand { get; private set; }
 
         public MainPageViewModel()
         {
@@ -72,92 +75,90 @@ namespace HP32SII.Logic
             SubtractCommand = new Command(HandleSubtract);
             AddCommand = new Command(HandleAdd);
             BackspaceCommand = new Command(HandleBackspace);
+            SwapCommand = new Command(HandleSwap);
         }
 
         private void HandleEnterKey()
         {
-            calculator.Push(Convert.ToDouble(Display.Replace(" ", "").Replace("_", "")));
-            if (Display[Display.Length - 1] == '_')
-            {
-                Display = Display.Remove(Display.Length - 1);
-            }
+            pushAtNextAppend = false;
+            output.Freeze();
+            calculator.Push(output.ToDouble());
+            Display = output.ToString();
         }
 
         private void HandleChangeSign()
         {
-            if (Convert.ToDouble(Display.Replace(" ", "").Replace("_", "")) != 0.0)
+            output.ChangeSign();
+            Display = output.ToString();
+            if (!output.IsEditable)
             {
-                Display = (Display[0] == ' ' ? '-' : ' ') + Display.Substring(1);
+                pushAtNextAppend = true;
             }
         }
 
-        private void HandleNumericKey(string number)
+        private void HandleNumericKey(string digit)
         {
-            if (Display.Length < 13)
+            if (pushAtNextAppend)
             {
-                if (Display.Length == 2 && Display[1] == '0' || Display[Display.Length - 1] == '_')
-                {
-                    Display = Display.Remove(Display.Length - 1);
-                    Display += number + '_';
-                }
-                else
-                {
-                    Display = " " + number + "_";
-                }
+                calculator.Push(output.ToDouble());
+                pushAtNextAppend = false;
             }
+            output.Append(digit);
+            Display = output.ToString();
         }
 
         private void HandleClearKey()
         {
-            Display = " 0";
+            pushAtNextAppend = false;
+            output.Clear();
+            Display = output.ToString();
         }
 
         private void HandleBackspace()
         {
-            if (Display.Length > 2)
-            {
-                if (Display.Length == 3)
-                {
-                    Display = " 0";
-                }
-                else if (Display[Display.Length - 1] == '_')
-                {
-                    Display = Display.Remove(Display.Length - 2);
-                    Display += '_';                    
-                }
-                else
-                {
-                    Display = " 0";
-                }
-            }
+            pushAtNextAppend = false;
+            output.Backspace();
+            Display = output.ToString();
         }
 
         private void HandleDivide()
         {
-            var number = Convert.ToDouble(Display.Replace(" ", "").Replace("_", ""));
-            var result = calculator.Divide(number).ToString();
-            Display = (result[0] == '-' ? "" : " ") + result;
+            pushAtNextAppend = false;
+            var z = calculator.Divide(output.ToDouble());
+            output.FromDouble(z);
+            Display = output.ToString();
         }
 
         private void HandleMultiply()
         {
-            var number = Convert.ToDouble(Display.Replace(" ", "").Replace("_", ""));
-            var result = calculator.Multiply(number).ToString();
-            Display = (result[0] == '-' ? "" : " ") + result;
+            pushAtNextAppend = false;
+            var z = calculator.Multiply(output.ToDouble());
+            output.FromDouble(z);
+            Display = output.ToString();
         }
 
         private void HandleSubtract()
         {
-            var number = Convert.ToDouble(Display.Replace(" ", "").Replace("_", ""));
-            var result = calculator.Subtract(number).ToString();
-            Display = (result[0] == '-' ? "" : " ") + result;
+            pushAtNextAppend = false;
+            var z = calculator.Subtract(output.ToDouble());
+            output.FromDouble(z);
+            Display = output.ToString();
         }
 
         private void HandleAdd()
         {
-            var number = Convert.ToDouble(Display.Replace(" ", "").Replace("_", ""));
-            var result = calculator.Add(number).ToString();
-            Display = (result[0] == '-' ? "" : " ") + result;
+            pushAtNextAppend = false;
+            var z = calculator.Add(output.ToDouble());
+            output.FromDouble(z);
+            Display = output.ToString();
+        }
+
+        private void HandleSwap()
+        {
+            pushAtNextAppend = false;
+            var z = calculator.Swap(output.ToDouble());
+            output.FromDouble(z);
+            Display = output.ToString();
         }
     }
 }

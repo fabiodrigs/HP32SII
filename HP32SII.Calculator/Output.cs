@@ -15,47 +15,25 @@ namespace HP32SII.Logic
 
         private const int MaxNumberLength = 12;
 
-        private bool isPositive = true;
+        public bool IsPositive { get; set; } = true;
         private string number;
-        private bool isEditable = true;
+        public bool IsEditable { get; private set; } = true;
 
-        public void FromString(string output)
+        public Output()
         {
-            if (output[0] == PositivePrefix[0])
-            {
-                isPositive = true;
-            }
-            else if (output[0] == NegativePrefix[0])
-            {
-                isPositive = false;
-            }
-            else
-            {
-                throw new InvalidOperationException("Sign must be ' ' or '-'");
-            }
-
-            if (output[output.Length - 1] == EditableSuffix[0])
-            {
-                isEditable = true;
-                number = output.Substring(1, output.Length - 2);
-            }
-            else
-            {
-                isEditable = false;
-                number = output.Substring(1, output.Length - 1);
-            }
+            Clear();
         }
 
         public void Clear()
         {
-            isPositive = true;
-            isEditable = false;
+            IsPositive = true;
+            IsEditable = false;
             number = DefaultNumber;
         }
 
         public void Append(string digit)
         {
-            if (isEditable)
+            if (IsEditable)
             {
                 if (number.Length < MaxNumberLength)
                 {
@@ -64,15 +42,15 @@ namespace HP32SII.Logic
             }
             else
             {
-                isPositive = true;
-                isEditable = true;
+                IsPositive = true;
+                IsEditable = true;
                 number = digit;
             }
         }
 
         public void Backspace()
         {
-            if (!isEditable || number.Length == 1)
+            if (!IsEditable || number.Length == 1)
             {
                 Clear();
             }
@@ -84,25 +62,60 @@ namespace HP32SII.Logic
 
         public void ChangeSign()
         {
-            if (number != DefaultNumber || isEditable)
+            if (number != DefaultNumber || IsEditable)
             {
-                isPositive = !isPositive;
+                IsPositive = !IsPositive;
             }
         }
 
         public void Freeze()
         {
-            isEditable = false;
+            IsEditable = false;
+        }
+
+
+        public void FromString(string output)
+        {
+            if (output[0] == PositivePrefix[0])
+            {
+                IsPositive = true;
+            }
+            else if (output[0] == NegativePrefix[0])
+            {
+                IsPositive = false;
+            }
+            else
+            {
+                throw new InvalidOperationException("Sign must be ' ' or '-'");
+            }
+
+            if (output[output.Length - 1] == EditableSuffix[0])
+            {
+                IsEditable = true;
+                number = output.Substring(1, output.Length - 2);
+            }
+            else
+            {
+                IsEditable = false;
+                number = output.Substring(1, output.Length - 1);
+            }
+        }
+
+        public void FromDouble(double x)
+        {
+            IsPositive = x >= 0;
+            number = Math.Abs(x).ToString();
+            IsEditable = false;
         }
 
         public override string ToString()
         {
-            return (isPositive ? PositivePrefix : NegativePrefix) + number + (isEditable ? EditableSuffix : FrozenSuffix);
+            return (IsPositive ? PositivePrefix : NegativePrefix) + number + (IsEditable ? EditableSuffix : FrozenSuffix);
         }
 
         public double ToDouble()
         {
-            return Convert.ToDouble(number) * (isPositive ? 1 : -1);
+            return Convert.ToDouble(number) * (IsPositive ? 1 : -1);
         }
     }
 }

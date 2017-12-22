@@ -9,6 +9,7 @@ namespace HP32SII.Logic
     internal sealed class StackUnit
     {
         Stack<double> stack = new Stack<double>();
+        private double lastPopped = 0.0;
 
         public double Add(double x)
         {
@@ -37,7 +38,7 @@ namespace HP32SII.Logic
 
         public double Swap(double x)
         {
-            var y = stack.Pop();
+            var y = Pop();
             stack.Push(x);
             return y;
         }
@@ -52,6 +53,7 @@ namespace HP32SII.Logic
         public void Clear()
         {
             stack.Clear();
+            lastPopped = 0.0;
         }
 
         public double Peek()
@@ -61,7 +63,11 @@ namespace HP32SII.Logic
 
         private double Pop()
         {
-            return stack.Count == 0 ? 0.0 : stack.Pop();
+            if (stack.Count != 0)
+            { 
+                lastPopped = stack.Pop();
+            }
+            return lastPopped;
         }
 
         #endregion

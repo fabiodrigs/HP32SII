@@ -68,7 +68,7 @@
             <Button Content="TAN" Grid.Row="1" Grid.Column="5" />
             <!--Third line-->
             <Button Content="ENTER" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Command="{Binding EnterCommand}"/>
-            <Button Content="SWAP" Grid.Row="2" Grid.Column="2" />
+            <Button Content="SWAP" Grid.Row="2" Grid.Column="2" Command="{Binding SwapCommand}"/>
             <Button Content="+/-" Grid.Row="2" Grid.Column="3" Command="{Binding ChangeSignCommand}"/>
             <Button Content="E" Grid.Row="2" Grid.Column="4" />
             <Button Content="CLEAR" Grid.Row="2" Grid.Column="5" Command="{Binding BackspaceCommand}"/>
