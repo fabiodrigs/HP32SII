@@ -48,6 +48,16 @@ namespace HP32SII.Logic.Test
         }
 
         [Test]
+        public void TestAppendDigitEditableWithdot()
+        {
+            output.FromString(" 12345678901._");
+            output.AppendDigit("3");
+
+            Assert.That(output.ToString(), Is.EqualTo(" 12345678901.3_"));
+            Assert.That(output.ToDouble(), Is.EqualTo(12345678901.3));
+        }
+
+        [Test]
         public void TestAppendDigitFrozen()
         {
             output.FromString(" 123");

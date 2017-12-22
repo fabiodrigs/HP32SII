@@ -36,7 +36,7 @@ namespace HP32SII.Logic
         {
             if (IsEditable)
             {
-                if (number.Length < MaxNumberLength)
+                if (number.Replace(".", "").Length < MaxNumberLength)
                 {
                     number += digit;
                 }
