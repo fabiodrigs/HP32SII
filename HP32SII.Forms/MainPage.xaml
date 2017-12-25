@@ -59,26 +59,26 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <!--First line-->
-                <Button Grid.Row="0" Grid.Column="0" />
-                <Button Grid.Row="0" Grid.Column="1" />
-                <Button Grid.Row="0" Grid.Column="2" />
-                <Button Grid.Row="0" Grid.Column="3" />
-                <Button Grid.Row="0" Grid.Column="4" />
-                <Button Grid.Row="0" Grid.Column="5" />
-                <!--Second line-->
-                <Button Grid.Row="1" Grid.Column="0" />
-                <Button Grid.Row="1" Grid.Column="1" />
-                <Button Grid.Row="1" Grid.Column="2" />
-                <Button Grid.Row="1" Grid.Column="3" />
-                <Button Grid.Row="1" Grid.Column="4" />
-                <Button Grid.Row="1" Grid.Column="5" />
-                <!--Third line-->
-                <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Command="{Binding EnterCommand}"/>
-                <Button Grid.Row="2" Grid.Column="2" Command="{Binding SwapCommand}"/>
-                <Button Grid.Row="2" Grid.Column="3" Command="{Binding ChangeSignCommand}"/>
-                <Button Grid.Row="2" Grid.Column="4" />
-                <Button Grid.Row="2" Grid.Column="5" Command="{Binding BackspaceCommand}"/>
+                <!--First row-->
+                <Button Grid.Row="0" Grid.Column="0" Command="{Binding ButtonCommand}" CommandParameter="SQRT" />
+                <Button Grid.Row="0" Grid.Column="1" Command="{Binding ButtonCommand}" CommandParameter="EXP" />
+                <Button Grid.Row="0" Grid.Column="2" Command="{Binding ButtonCommand}" CommandParameter="LN" />
+                <Button Grid.Row="0" Grid.Column="3" Command="{Binding ButtonCommand}" CommandParameter="POW" />
+                <Button Grid.Row="0" Grid.Column="4" Command="{Binding ButtonCommand}" CommandParameter="1/X" />
+                <Button Grid.Row="0" Grid.Column="5" Command="{Binding ButtonCommand}" CommandParameter="SUM" />
+                <!--Second row-->
+                <Button Grid.Row="1" Grid.Column="0" Command="{Binding ButtonCommand}" CommandParameter="STO" />
+                <Button Grid.Row="1" Grid.Column="1" Command="{Binding ButtonCommand}" CommandParameter="RCL" />
+                <Button Grid.Row="1" Grid.Column="2" Command="{Binding ButtonCommand}" CommandParameter="R" />
+                <Button Grid.Row="1" Grid.Column="3" Command="{Binding ButtonCommand}" CommandParameter="SIN" />
+                <Button Grid.Row="1" Grid.Column="4" Command="{Binding ButtonCommand}" CommandParameter="COS" />
+                <Button Grid.Row="1" Grid.Column="5" Command="{Binding ButtonCommand}" CommandParameter="TAN" />
+                <!--Third row-->
+                <Button Grid.Row="2" Grid.Column="0" Command="{Binding ButtonCommand}" CommandParameter="ENTER" Grid.ColumnSpan="2" />
+                <Button Grid.Row="2" Grid.Column="2" Command="{Binding ButtonCommand}" CommandParameter="SWAP" />
+                <Button Grid.Row="2" Grid.Column="3" Command="{Binding ButtonCommand}" CommandParameter="+/-" />
+                <Button Grid.Row="2" Grid.Column="4" Command="{Binding ButtonCommand}" CommandParameter="E" />
+                <Button Grid.Row="2" Grid.Column="5" Command="{Binding ButtonCommand}" CommandParameter="BACK" />
             </Grid>
             <!--Bottom keyboard-->
             <Grid Grid.Row="4" Grid.Column="1">
@@ -95,30 +95,30 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <!--First line-->
-                <Button Grid.Row="0" Grid.Column="0" />
-                <Button Grid.Row="0" Grid.Column="1" Command="{Binding NumericCommand}" CommandParameter="7"/>
-                <Button Grid.Row="0" Grid.Column="2" Command="{Binding NumericCommand}" CommandParameter="8"/>
-                <Button Grid.Row="0" Grid.Column="3" Command="{Binding NumericCommand}" CommandParameter="9"/>
-                <Button Grid.Row="0" Grid.Column="4" Command="{Binding DivideCommand}" />
-                <!--Second line-->
-                <Button Grid.Row="1" Grid.Column="0" />
-                <Button Grid.Row="1" Grid.Column="1" Command="{Binding NumericCommand}" CommandParameter="4"/>
-                <Button Grid.Row="1" Grid.Column="2" Command="{Binding NumericCommand}" CommandParameter="5"/>
-                <Button Grid.Row="1" Grid.Column="3" Command="{Binding NumericCommand}" CommandParameter="6"/>
-                <Button Grid.Row="1" Grid.Column="4" Command="{Binding MultipleCommand}" />
-                <!--Third line-->
-                <Button Grid.Row="2" Grid.Column="0" />
-                <Button Grid.Row="2" Grid.Column="1" Command="{Binding NumericCommand}" CommandParameter="1"/>
-                <Button Grid.Row="2" Grid.Column="2" Command="{Binding NumericCommand}" CommandParameter="2"/>
-                <Button Grid.Row="2" Grid.Column="3" Command="{Binding NumericCommand}" CommandParameter="3"/>
-                <Button Grid.Row="2" Grid.Column="4" Command="{Binding SubtractCommand}" />
-                <!--Fourth line-->
-                <Button Grid.Row="3" Grid.Column="0" Command="{Binding ClearCommand}" />
-                <Button Grid.Row="3" Grid.Column="1" Command="{Binding NumericCommand}" CommandParameter="0"/>
-                <Button Grid.Row="3" Grid.Column="2" Command="{Binding DotCommand}" />
-                <Button Grid.Row="3" Grid.Column="3" />
-                <Button Grid.Row="3" Grid.Column="4" Command="{Binding AddCommand}" />
+                <!--Fourth row-->
+                <Button Grid.Row="0" Grid.Column="0" Command="{Binding ButtonCommand}" CommandParameter="XEQ" />
+                <Button Grid.Row="0" Grid.Column="1" Command="{Binding ButtonCommand}" CommandParameter="7" />
+                <Button Grid.Row="0" Grid.Column="2" Command="{Binding ButtonCommand}" CommandParameter="8" />
+                <Button Grid.Row="0" Grid.Column="3" Command="{Binding ButtonCommand}" CommandParameter="9" />
+                <Button Grid.Row="0" Grid.Column="4" Command="{Binding ButtonCommand}" CommandParameter="/" />
+                <!--Fifth row-->
+                <Button Grid.Row="1" Grid.Column="0" Command="{Binding ButtonCommand}" CommandParameter="LEFT" />
+                <Button Grid.Row="1" Grid.Column="1" Command="{Binding ButtonCommand}" CommandParameter="4" />
+                <Button Grid.Row="1" Grid.Column="2" Command="{Binding ButtonCommand}" CommandParameter="5" />
+                <Button Grid.Row="1" Grid.Column="3" Command="{Binding ButtonCommand}" CommandParameter="6" />
+                <Button Grid.Row="1" Grid.Column="4" Command="{Binding ButtonCommand}" CommandParameter="*" />
+                <!--Sixth row-->
+                <Button Grid.Row="2" Grid.Column="0" Command="{Binding ButtonCommand}" CommandParameter="RIGHT" />
+                <Button Grid.Row="2" Grid.Column="1" Command="{Binding ButtonCommand}" CommandParameter="1" />
+                <Button Grid.Row="2" Grid.Column="2" Command="{Binding ButtonCommand}" CommandParameter="2" />
+                <Button Grid.Row="2" Grid.Column="3" Command="{Binding ButtonCommand}" CommandParameter="3" />
+                <Button Grid.Row="2" Grid.Column="4" Command="{Binding ButtonCommand}" CommandParameter="-" />
+                <!--Seventh row-->
+                <Button Grid.Row="3" Grid.Column="0" Command="{Binding ButtonCommand}" CommandParameter="C" />
+                <Button Grid.Row="3" Grid.Column="1" Command="{Binding ButtonCommand}" CommandParameter="0" />
+                <Button Grid.Row="3" Grid.Column="2" Command="{Binding ButtonCommand}" CommandParameter="." />
+                <Button Grid.Row="3" Grid.Column="3" Command="{Binding ButtonCommand}" CommandParameter="R/S" />
+                <Button Grid.Row="3" Grid.Column="4" Command="{Binding ButtonCommand}" CommandParameter="+" />
             </Grid>
         </Grid>
     </ContentPage.Content>
