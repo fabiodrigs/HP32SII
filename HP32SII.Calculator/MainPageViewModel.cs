@@ -8,7 +8,17 @@ namespace HP32SII.Logic
 {
     public class MainPageViewModel : ViewModelBase
     {
+        private enum State
+        {
+            Off,
+            Default,
+            Left,
+            Right,
+        }
+
+        private State state = State.Default;
         private Dictionary<string, Button> keyboard;
+        private Dictionary<string, Func<double, double>> monadicOperators;
         private Dictionary<string, Func<double, double>> dyadicOperators;
         private Calculator calculator = new Calculator();
         private Output output = new Output();
@@ -69,11 +79,11 @@ namespace HP32SII.Logic
             keyboard = new Dictionary<string, Button>
             {
                 // First row
-                { "SQRT", new Button(null, null, null) },
-                { "EXP", new Button(null, null, null) },
-                { "LN", new Button(null, null, null) },
-                { "POW", new Button(null, null, null) },
-                { "1/X", new Button(null, null, null) },
+                { "SQRT", new Button(MonadicOperation, null, null) },
+                { "EXP", new Button(MonadicOperation, null, null) },
+                { "LN", new Button(MonadicOperation, null, null) },
+                { "POW", new Button(DyadicOperation, null, null) },
+                { "1/X", new Button(MonadicOperation, null, null) },
                 { "SUM", new Button(null, null, null) },
                 // Second row
                 { "STO", new Button(null, null, null) },
@@ -95,23 +105,31 @@ namespace HP32SII.Logic
                 { "9", new Button(NumericKey, null, null) },
                 { "/", new Button(DyadicOperation, null, null) },
                 // Fifth row
-                { "LEFT", new Button(LeftArrow, null, null) },
+                { "LEFT", new Button(LeftArrowDefaultOrRightState, LeftArrowLeftState, RightArrowDefaultOrLeftState) },
                 { "4", new Button(NumericKey, null, null) },
                 { "5", new Button(NumericKey, null, null) },
                 { "6", new Button(NumericKey, null, null) },
                 { "*", new Button(DyadicOperation, null, null) },
                 // Sixth row
-                { "RIGHT", new Button(RightArrow, null, null) },
+                { "RIGHT", new Button(RightArrowDefaultOrLeftState, RightArrowDefaultOrLeftState, RightArrowRightState) },
                 { "1", new Button(NumericKey, null, null) },
                 { "2", new Button(NumericKey, null, null) },
                 { "3", new Button(NumericKey, null, null) },
                 { "-", new Button(DyadicOperation, null, null) },
                 // Seventh row
-                { "C", new Button(Clear, null, null) },
+                { "C", new Button(Clear, TurnOff, TurnOff) },
                 { "0", new Button(null, null, null) },
                 { ".", new Button(HandleDot, null, null) },
                 { "R/S", new Button(null, null, null) },
                 { "+", new Button(DyadicOperation, null, null) },
+            };
+
+            monadicOperators = new Dictionary<string, Func<double, double>>
+            {
+                { "SQRT", calculator.SquareRoot },
+                { "EXP", calculator.Exponential },
+                { "LN", calculator.NaturalLogarithm },
+                { "1/X", calculator.Invert },
             };
 
             dyadicOperators = new Dictionary<string, Func<double, double>>
@@ -121,12 +139,37 @@ namespace HP32SII.Logic
                 { "-", calculator.Subtract },
                 { "+", calculator.Add },
                 { "SWAP", calculator.Swap },
+                { "POW", calculator.Power },
             };
         }
 
         private void HandleButton(string button)
         {
-            keyboard[button].DefaultAction(button);
+            switch (state)
+            {
+                case State.Off:
+                    if (button == "C")
+                    {
+                        Clear(button);
+                        state = State.Default;
+                    }
+                    break;
+                case State.Default:
+                    keyboard[button].DefaultAction(button);
+                    break;
+                case State.Left:
+                    TopStatus = "";
+                    state = State.Default;
+                    keyboard[button].LeftAction(button);
+                    break;
+                case State.Right:
+                    TopStatus = "";
+                    state = State.Default;
+                    keyboard[button].RightAction(button);
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void Enter(string button)
@@ -137,14 +180,28 @@ namespace HP32SII.Logic
             Display = output.ToString();
         }
 
-        private void LeftArrow(string button)
+        private void LeftArrowDefaultOrRightState(string button)
         {
             TopStatus = "  <=";
+            state = State.Left;
         }
 
-        private void RightArrow(string button)
+        private void LeftArrowLeftState(string button)
+        {
+            TopStatus = "";
+            state = State.Default;
+        }
+
+        private void RightArrowDefaultOrLeftState(string button)
         {
             TopStatus = "        =>";
+            state = State.Right;
+        }
+
+        private void RightArrowRightState(string button)
+        {
+            TopStatus = "";
+            state = State.Default;
         }
 
         private void ChangeSign(string button)
@@ -185,14 +242,11 @@ namespace HP32SII.Logic
             output.Clear();
             Display = output.ToString();
         }
-        
-        private void DyadicOperation(string button)
+
+        private void TurnOff(string button)
         {
-            pushAtNextAppend = false;
-            var operation = dyadicOperators[button];
-            var z = operation(output.ToDouble());
-            output.FromDouble(z);
-            Display = output.ToString();
+            Display = "";
+            state = State.Off;
         }
 
         private void Backspace(string button)
@@ -201,6 +255,23 @@ namespace HP32SII.Logic
             output.Backspace();
             Display = output.ToString();
         }
-        
+
+        private void MonadicOperation(string button)
+        {
+            pushAtNextAppend = true;
+            var operation = monadicOperators[button];
+            var z = operation(output.ToDouble());
+            output.FromDouble(z);
+            Display = output.ToString();
+        }
+
+        private void DyadicOperation(string button)
+        {
+            pushAtNextAppend = false;
+            var operation = dyadicOperators[button];
+            var z = operation(output.ToDouble());
+            output.FromDouble(z);
+            Display = output.ToString();
+        }
     }
 }
