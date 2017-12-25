@@ -105,7 +105,7 @@ namespace HP32SII.Logic
                 { "9", new Button(NumericKey, null, null) },
                 { "/", new Button(DyadicOperation, null, null) },
                 // Fifth row
-                { "LEFT", new Button(LeftArrowDefaultOrRightState, LeftArrowLeftState, RightArrowDefaultOrLeftState) },
+                { "LEFT", new Button(LeftArrowDefaultOrRightState, LeftArrowLeftState, LeftArrowDefaultOrRightState) },
                 { "4", new Button(NumericKey, null, null) },
                 { "5", new Button(NumericKey, null, null) },
                 { "6", new Button(NumericKey, null, null) },
@@ -158,14 +158,20 @@ namespace HP32SII.Logic
                     keyboard[button].DefaultAction(button);
                     break;
                 case State.Left:
-                    TopStatus = "";
-                    state = State.Default;
                     keyboard[button].LeftAction(button);
+                    if (state == State.Left)
+                    {
+                        TopStatus = "";
+                        state = State.Default;
+                    }
                     break;
                 case State.Right:
-                    TopStatus = "";
-                    state = State.Default;
                     keyboard[button].RightAction(button);
+                    if (state == State.Right)
+                    {
+                        TopStatus = "";
+                        state = State.Default;
+                    }
                     break;
                 default:
                     break;
@@ -246,6 +252,8 @@ namespace HP32SII.Logic
         private void TurnOff(string button)
         {
             Display = "";
+            TopStatus = "";
+            BottomStatus = "";
             state = State.Off;
         }
 
