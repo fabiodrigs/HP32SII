@@ -8,14 +8,6 @@ namespace HP32SII.Logic
 {
     public class MainPageViewModel : ViewModelBase
     {
-        private enum State
-        {
-            Off,
-            Default,
-            Left,
-            Right,
-        }
-
         private State state = State.Default;
         private Dictionary<string, Button> keyboard;
         private Dictionary<string, Func<double, double>> monadicOperators;
@@ -155,62 +147,53 @@ namespace HP32SII.Logic
                     }
                     break;
                 case State.Default:
-                    keyboard[button].DefaultAction(button);
+                    state = keyboard[button].DefaultAction(button);
                     break;
                 case State.Left:
-                    keyboard[button].LeftAction(button);
-                    if (state == State.Left)
-                    {
-                        TopStatus = "";
-                        state = State.Default;
-                    }
+                    state = keyboard[button].LeftAction(button);
                     break;
                 case State.Right:
-                    keyboard[button].RightAction(button);
-                    if (state == State.Right)
-                    {
-                        TopStatus = "";
-                        state = State.Default;
-                    }
+                    state = keyboard[button].RightAction(button);
                     break;
                 default:
                     break;
             }
         }
 
-        private void Enter(string button)
+        private State Enter(string button)
         {
             pushAtNextAppend = false;
             output.Freeze();
             calculator.Push(output.ToDouble());
             Display = output.ToString();
+            return State.Default;
         }
 
-        private void LeftArrowDefaultOrRightState(string button)
+        private State LeftArrowDefaultOrRightState(string button)
         {
             TopStatus = "  <=";
-            state = State.Left;
+            return State.Left;
         }
 
-        private void LeftArrowLeftState(string button)
+        private State LeftArrowLeftState(string button)
         {
             TopStatus = "";
-            state = State.Default;
+            return State.Default;
         }
 
-        private void RightArrowDefaultOrLeftState(string button)
+        private State RightArrowDefaultOrLeftState(string button)
         {
             TopStatus = "        =>";
-            state = State.Right;
+            return State.Right;
         }
 
-        private void RightArrowRightState(string button)
+        private State RightArrowRightState(string button)
         {
             TopStatus = "";
-            state = State.Default;
+            return State.Default;
         }
 
-        private void ChangeSign(string button)
+        private State ChangeSign(string button)
         {
             output.ChangeSign();
             Display = output.ToString();
@@ -218,9 +201,10 @@ namespace HP32SII.Logic
             {
                 pushAtNextAppend = true;
             }
+            return State.Default;
         }
 
-        private void NumericKey(string button)
+        private State NumericKey(string button)
         {
             if (pushAtNextAppend)
             {
@@ -229,9 +213,10 @@ namespace HP32SII.Logic
             }
             output.AppendDigit(button);
             Display = output.ToString();
+            return State.Default;
         }
 
-        private void HandleDot(string button)
+        private State HandleDot(string button)
         {
             if (pushAtNextAppend)
             {
@@ -240,46 +225,51 @@ namespace HP32SII.Logic
             }
             output.AppendDot();
             Display = output.ToString();
+            return State.Default;
         }
 
-        private void Clear(string button)
+        private State Clear(string button)
         {
             pushAtNextAppend = false;
             output.Clear();
             Display = output.ToString();
+            return State.Default;
         }
 
-        private void TurnOff(string button)
+        private State TurnOff(string button)
         {
             Display = "";
             TopStatus = "";
             BottomStatus = "";
-            state = State.Off;
+            return State.Off;
         }
 
-        private void Backspace(string button)
+        private State Backspace(string button)
         {
             pushAtNextAppend = false;
             output.Backspace();
             Display = output.ToString();
+            return State.Default;
         }
 
-        private void MonadicOperation(string button)
+        private State MonadicOperation(string button)
         {
             pushAtNextAppend = true;
             var operation = monadicOperators[button];
             var z = operation(output.ToDouble());
             output.FromDouble(z);
             Display = output.ToString();
+            return State.Default;
         }
 
-        private void DyadicOperation(string button)
+        private State DyadicOperation(string button)
         {
             pushAtNextAppend = false;
             var operation = dyadicOperators[button];
             var z = operation(output.ToDouble());
             output.FromDouble(z);
             Display = output.ToString();
+            return State.Default;
         }
     }
 }
