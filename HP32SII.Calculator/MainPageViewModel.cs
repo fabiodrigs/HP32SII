@@ -9,9 +9,9 @@ namespace HP32SII.Logic
     public class MainPageViewModel : ViewModelBase
     {
         private State state = State.Default;
-        private Dictionary<string, Button> keyboard;
-        private Dictionary<Tuple<string, State>, Func<double, double>> monadicOperators;
-        private Dictionary<Tuple<string, State>, Func<double, double>> dyadicOperators;
+        private Dictionary<string, Func<State>> defaultKeyboard;
+        private Dictionary<string, Func<State>> leftKeyboard;
+        private Dictionary<string, Func<State>> rightKeyboard;
         private Calculator calculator = new Calculator();
         private Output output = new Output();
         private bool pushAtNextAppend = false;
@@ -68,82 +68,152 @@ namespace HP32SII.Logic
         {
             ButtonCommand = new Command<string>(HandleButton);
 
-            keyboard = new Dictionary<string, Button>
+            Func<Func<double, double>, State> monadic = MonadicOperation;
+            Func<Func<double, double>, State> dyadic = DyadicOperation;
+            Func<string, State> numeric = NumericKey;
+
+            defaultKeyboard = new Dictionary<string, Func<State>>
             {
                 // First row
-                { "SQRT", new Button(MonadicOperation, MonadicOperation, DoNothing) },
-                { "EXP", new Button(MonadicOperation, MonadicOperation, DoNothing) },
-                { "LN", new Button(MonadicOperation, MonadicOperation, DoNothing) },
-                { "POW", new Button(DyadicOperation, DoNothing, DoNothing) },
-                { "1/X", new Button(MonadicOperation, MonadicOperation, DoNothing) },
-                { "SUM", new Button(DoNothing, DoNothing, DoNothing) },
+                { "SQRT", monadic.Compose(calculator.SquareRoot) },
+                { "EXP", monadic.Compose(calculator.Exponential) },
+                { "LN", monadic.Compose(calculator.NaturalLogarithm) },
+                { "POW", dyadic.Compose(calculator.Power) },
+                { "1/X", monadic.Compose(calculator.Invert) },
+                { "SUM", DoNothing },
                 // Second row
-                { "STO", new Button(DoNothing, DoNothing, DoNothing) },
-                { "RCL", new Button(DoNothing, DoNothing, DoNothing) },
-                { "R", new Button(DoNothing, DoNothing, DoNothing) },
-                { "SIN", new Button(DoNothing, DoNothing, DoNothing) },
-                { "COS", new Button(DoNothing, DoNothing, DoNothing) },
-                { "TAN", new Button(DoNothing, DoNothing, DoNothing) },
+                { "STO", DoNothing },
+                { "RCL", DoNothing },
+                { "R", DoNothing },
+                { "SIN", DoNothing },
+                { "COS", DoNothing },
+                { "TAN", DoNothing },
                 // Third row
-                { "ENTER", new Button(Enter, DoNothing, DoNothing) },
-                { "SWAP", new Button(DyadicOperation, DoNothing, DoNothing) },
-                { "+/-", new Button(ChangeSign, DoNothing, DoNothing) },
-                { "E", new Button(DoNothing, DoNothing, DoNothing) },
-                { "BACK", new Button(Backspace, DoNothing, DoNothing) },
+                { "ENTER", Enter },
+                { "SWAP", dyadic.Compose(calculator.Swap) },
+                { "+/-", ChangeSign },
+                { "E", DoNothing },
+                { "BACK", Backspace },
                 // Fourth row
-                { "XEQ", new Button(DoNothing, DoNothing, DoNothing) },
-                { "7", new Button(NumericKey, DoNothing, DoNothing) },
-                { "8", new Button(NumericKey, DoNothing, DoNothing) },
-                { "9", new Button(NumericKey, DoNothing, DoNothing) },
-                { "/", new Button(DyadicOperation, DoNothing, DoNothing) },
+                { "XEQ", DoNothing },
+                { "7", numeric.Compose("7") },
+                { "8", numeric.Compose("8") },
+                { "9", numeric.Compose("9") },
+                { "/", dyadic.Compose(calculator.Divide) },
                 // Fifth row
-                { "LEFT", new Button(LeftArrowDefaultOrRightState, LeftArrowLeftState, LeftArrowDefaultOrRightState) },
-                { "4", new Button(NumericKey, DoNothing, DoNothing) },
-                { "5", new Button(NumericKey, DoNothing, DoNothing) },
-                { "6", new Button(NumericKey, MonadicOperation, MonadicOperation) },
-                { "*", new Button(DyadicOperation, DoNothing, DoNothing) },
+                { "LEFT", LeftArrowDefaultOrRightState },
+                { "4", numeric.Compose("4") },
+                { "5", numeric.Compose("5") },
+                { "6", numeric.Compose("6") },
+                { "*", dyadic.Compose(calculator.Multiply) },
                 // Sixth row
-                { "RIGHT", new Button(RightArrowDefaultOrLeftState, RightArrowDefaultOrLeftState, RightArrowRightState) },
-                { "1", new Button(NumericKey, MonadicOperation, MonadicOperation) },
-                { "2", new Button(NumericKey, MonadicOperation, MonadicOperation) },
-                { "3", new Button(NumericKey, MonadicOperation, MonadicOperation) },
-                { "-", new Button(DyadicOperation, DoNothing, DoNothing) },
+                { "RIGHT", RightArrowDefaultOrLeftState },
+                { "1", numeric.Compose("1") },
+                { "2", numeric.Compose("2") },
+                { "3", numeric.Compose("3") },
+                { "-", dyadic.Compose(calculator.Subtract) },
                 // Seventh row
-                { "C", new Button(Clear, TurnOff, TurnOff) },
-                { "0", new Button(NumericKey, DoNothing, DoNothing) },
-                { ".", new Button(HandleDot, DoNothing, DoNothing) },
-                { "R/S", new Button(DoNothing, DoNothing, DoNothing) },
-                { "+", new Button(DyadicOperation, DoNothing, DoNothing) },
+                { "C", Clear },
+                { "0", numeric.Compose("0") },
+                { ".", HandleDot },
+                { "R/S", DoNothing },
+                { "+", dyadic.Compose(calculator.Add) },
             };
 
-            monadicOperators = new Dictionary<Tuple<string, State>, Func<double, double>>
+            leftKeyboard = new Dictionary<string, Func<State>>
             {
-                { new Tuple<string, State>("SQRT", State.Default), calculator.SquareRoot },
-                { new Tuple<string, State>("SQRT", State.Left), calculator.Square },
-                { new Tuple<string, State>("EXP", State.Default), calculator.Exponential },
-                { new Tuple<string, State>("EXP", State.Left), calculator.PowerOfTen },
-                { new Tuple<string, State>("LN", State.Default), calculator.NaturalLogarithm },
-                { new Tuple<string, State>("LN", State.Left), calculator.LogBase10 },
-                { new Tuple<string, State>("1/X", State.Default), calculator.Invert },
-                { new Tuple<string, State>("1/X", State.Left), calculator.Factorial },
+                // First row
+                { "SQRT", monadic.Compose(calculator.SquareRoot) },
+                { "EXP", monadic.Compose(calculator.Exponential) },
+                { "LN", monadic.Compose(calculator.NaturalLogarithm) },
+                { "POW", DoNothing },
+                { "1/X", monadic.Compose(calculator.Invert) },
+                { "SUM", DoNothing },
+                // Second row
+                { "STO", DoNothing },
+                { "RCL", DoNothing },
+                { "R", DoNothing },
+                { "SIN", DoNothing },
+                { "COS", DoNothing },
+                { "TAN", DoNothing },
+                // Third row
+                { "ENTER", DoNothing },
+                { "SWAP", DoNothing },
+                { "+/-", DoNothing },
+                { "E", DoNothing },
+                { "BACK", DoNothing },
+                // Fourth row
+                { "XEQ", DoNothing },
+                { "7", DoNothing },
+                { "8", DoNothing },
+                { "9", DoNothing },
+                { "/", DoNothing },
+                // Fifth row
+                { "LEFT", LeftArrowLeftState },
+                { "4", DoNothing },
+                { "5", DoNothing },
+                { "6", monadic.Compose(calculator.ToDegree) },
+                { "*", DoNothing },
+                // Sixth row
+                { "RIGHT", RightArrowDefaultOrLeftState },
+                { "1", monadic.Compose(calculator.ToKilo) },
+                { "2", monadic.Compose(calculator.ToCelsius) },
+                { "3", monadic.Compose(calculator.ToCentimeter) },
+                { "-", DoNothing },
+                // Seventh row
+                { "C", TurnOff },
+                { "0", DoNothing },
+                { ".", DoNothing },
+                { "R/S", DoNothing },
+                { "+", DoNothing },
             };
 
-            dyadicOperators = new Dictionary<Tuple<string, State>, Func <double, double>>
+            rightKeyboard = new Dictionary<string, Func<State>>
             {
-                { new Tuple<string, State>("/", State.Default), calculator.Divide },
-                { new Tuple<string, State>("*", State.Default), calculator.Multiply },
-                { new Tuple<string, State>("-", State.Default), calculator.Subtract },
-                { new Tuple<string, State>("+", State.Default), calculator.Add },
-                { new Tuple<string, State>("SWAP", State.Default), calculator.Swap },
-                { new Tuple<string, State>("POW", State.Default), calculator.Power },
-                { new Tuple<string, State>("6", State.Left), calculator.ToDegree },
-                { new Tuple<string, State>("6", State.Right), calculator.ToRadian },
-                { new Tuple<string, State>("1", State.Left), calculator.ToKilo },
-                { new Tuple<string, State>("1", State.Right), calculator.ToPound },
-                { new Tuple<string, State>("2", State.Left), calculator.ToCelsius },
-                { new Tuple<string, State>("2", State.Right), calculator.ToFahrenheit },
-                { new Tuple<string, State>("3", State.Left), calculator.ToCentimeter },
-                { new Tuple<string, State>("3", State.Right), calculator.ToInch },
+                // First row
+                { "SQRT", monadic.Compose(calculator.Square) },
+                { "EXP", monadic.Compose(calculator.PowerOfTen) },
+                { "LN", monadic.Compose(calculator.LogBase10) },
+                { "POW", DoNothing },
+                { "1/X", monadic.Compose(calculator.Factorial) },
+                { "SUM", DoNothing },
+                // Second row
+                { "STO", DoNothing },
+                { "RCL", DoNothing },
+                { "R", DoNothing },
+                { "SIN", DoNothing },
+                { "COS", DoNothing },
+                { "TAN", DoNothing },
+                // Third row
+                { "ENTER", DoNothing },
+                { "SWAP", DoNothing },
+                { "+/-", DoNothing },
+                { "E", DoNothing },
+                { "BACK", DoNothing },
+                // Fourth row
+                { "XEQ", DoNothing },
+                { "7", DoNothing },
+                { "8", DoNothing },
+                { "9", DoNothing },
+                { "/", DoNothing },
+                // Fifth row
+                { "LEFT", LeftArrowLeftState },
+                { "4", DoNothing },
+                { "5", DoNothing },
+                { "6", monadic.Compose(calculator.ToRadian) },
+                { "*", DoNothing },
+                // Sixth row
+                { "RIGHT", RightArrowDefaultOrLeftState },
+                { "1", monadic.Compose(calculator.ToPound) },
+                { "2", monadic.Compose(calculator.ToFahrenheit) },
+                { "3", monadic.Compose(calculator.ToInch) },
+                { "-", DoNothing },
+                // Seventh row
+                { "C", TurnOff },
+                { "0", DoNothing },
+                { ".", DoNothing },
+                { "R/S", DoNothing },
+                { "+", DoNothing },
             };
         }
 
@@ -154,18 +224,18 @@ namespace HP32SII.Logic
                 case State.Off:
                     if (button == "C")
                     {
-                        Clear(button);
+                        Clear();
                         state = State.Default;
                     }
                     break;
                 case State.Default:
-                    state = keyboard[button].DefaultAction(button);
+                    state = defaultKeyboard[button]();
                     break;
                 case State.Left:
-                    state = keyboard[button].LeftAction(button);
+                    state = leftKeyboard[button]();
                     break;
                 case State.Right:
-                    state = keyboard[button].RightAction(button);
+                    state = rightKeyboard[button]();
                     break;
                 default:
                     break;
@@ -192,13 +262,13 @@ namespace HP32SII.Logic
             }
         }
 
-        private State DoNothing(string button)
+        private State DoNothing()
         {
             return state;
         }
 
 
-        private State Enter(string button)
+        private State Enter()
         {
             pushAtNextAppend = false;
             output.Freeze();
@@ -207,27 +277,27 @@ namespace HP32SII.Logic
             return State.Default;
         }
 
-        private State LeftArrowDefaultOrRightState(string button)
+        private State LeftArrowDefaultOrRightState()
         {
             return State.Left;
         }
 
-        private State LeftArrowLeftState(string button)
+        private State LeftArrowLeftState()
         {
             return State.Default;
         }
 
-        private State RightArrowDefaultOrLeftState(string button)
+        private State RightArrowDefaultOrLeftState()
         {
             return State.Right;
         }
 
-        private State RightArrowRightState(string button)
+        private State RightArrowRightState()
         {
             return State.Default;
         }
 
-        private State ChangeSign(string button)
+        private State ChangeSign()
         {
             output.ChangeSign();
             Display = output.ToString();
@@ -250,7 +320,7 @@ namespace HP32SII.Logic
             return State.Default;
         }
 
-        private State HandleDot(string button)
+        private State HandleDot()
         {
             if (pushAtNextAppend)
             {
@@ -262,7 +332,7 @@ namespace HP32SII.Logic
             return State.Default;
         }
 
-        private State Clear(string button)
+        private State Clear()
         {
             pushAtNextAppend = false;
             output.Clear();
@@ -270,12 +340,12 @@ namespace HP32SII.Logic
             return State.Default;
         }
 
-        private State TurnOff(string button)
+        private State TurnOff()
         {
             return State.Off;
         }
 
-        private State Backspace(string button)
+        private State Backspace()
         {
             pushAtNextAppend = false;
             output.Backspace();
@@ -283,22 +353,20 @@ namespace HP32SII.Logic
             return State.Default;
         }
 
-        private State MonadicOperation(string button)
+        private State MonadicOperation(Func<double, double> operation)
         {
             pushAtNextAppend = true;
-            var operation = monadicOperators[new Tuple<string, State>(button, state)];
-            var z = operation(output.ToDouble());
-            output.FromDouble(z);
+            var result = operation(output.ToDouble());
+            output.FromDouble(result);
             Display = output.ToString();
             return State.Default;
         }
 
-        private State DyadicOperation(string button)
+        private State DyadicOperation(Func<double, double> operation)
         {
             pushAtNextAppend = false;
-            var operation = dyadicOperators[new Tuple<string, State>(button, state)];
-            var z = operation(output.ToDouble());
-            output.FromDouble(z);
+            var result = operation(output.ToDouble());
+            output.FromDouble(result);
             Display = output.ToString();
             return State.Default;
         }
