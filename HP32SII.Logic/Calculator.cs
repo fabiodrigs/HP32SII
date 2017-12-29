@@ -158,12 +158,12 @@ namespace HP32SII.Logic
         #endregion
 
         #region Storage features
-        public void Store(char key, double value)
+        public void Store(string key, double value)
         {
             storageUnit.Store(key, value);
         }
 
-        public double Recall(char key)
+        public double Recall(string key)
         {
             return storageUnit.Recall(key);
         }

@@ -13,7 +13,7 @@ namespace HP32SII.Logic.Test
         [Test]
         public void TestStoreAndRecall()
         {
-            char key = 'S';
+            string key = "S";
             double value = 27.0;
 
             storageUnit.Store(key, value);
@@ -23,13 +23,13 @@ namespace HP32SII.Logic.Test
         [Test]
         public void TestClearAll()
         {
-            storageUnit.Store('A', 1.0);
-            storageUnit.Store('Z', 26.0);
+            storageUnit.Store("A", 1.0);
+            storageUnit.Store("Z", 26.0);
 
             storageUnit.ClearAll();
 
-            Assert.That(0.0, Is.EqualTo(storageUnit.Recall('A')));
-            Assert.That(0.0, Is.EqualTo(storageUnit.Recall('Z')));
+            Assert.That(0.0, Is.EqualTo(storageUnit.Recall("A")));
+            Assert.That(0.0, Is.EqualTo(storageUnit.Recall("Z")));
         }
     }
 }

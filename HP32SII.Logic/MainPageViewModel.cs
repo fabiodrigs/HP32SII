@@ -1,6 +1,8 @@
 ﻿using GalaSoft.MvvmLight;
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 
@@ -12,6 +14,7 @@ namespace HP32SII.Logic
         private Dictionary<string, Func<State>> defaultKeyboard;
         private Dictionary<string, Func<State>> leftKeyboard;
         private Dictionary<string, Func<State>> rightKeyboard;
+        private Dictionary<string, string> alphabeticKeyboard;
         private Calculator calculator = new Calculator();
         private Output output = new Output();
         private bool pushAtNextAppend = false;
@@ -82,8 +85,8 @@ namespace HP32SII.Logic
                 { "1/X", monadic.Compose(calculator.Invert) },
                 { "SUM", DoNothing },
                 // Second row
-                { "STO", DoNothing },
-                { "RCL", DoNothing },
+                { "STO", Store },
+                { "RCL", Recall },
                 { "R", DoNothing },
                 { "SIN", DoNothing },
                 { "COS", DoNothing },
@@ -215,6 +218,54 @@ namespace HP32SII.Logic
                 { "R/S", DoNothing },
                 { "+", DoNothing },
             };
+
+            alphabeticKeyboard = new Dictionary<string, string>
+            {
+                // First row
+                { "SQRT", "A" },
+                { "EXP", "B" },
+                { "LN", "C" },
+                { "POW", "D" },
+                { "1/X", "E" },
+                { "SUM", "F" },
+                // Second row
+                { "STO", "G" },
+                { "RCL", "H" },
+                { "R", "I" },
+                { "SIN", "J" },
+                { "COS", "K" },
+                { "TAN", "L" },
+                // Third row
+                { "ENTER", "M" },
+                { "SWAP", "N" },
+                { "+/-", "O" },
+                { "E", "P" },
+                { "BACK", null },
+                // Fourth row
+                { "XEQ", null },
+                { "7", "Q" },
+                { "8", "R" },
+                { "9", "S" },
+                { "/", null },
+                // Fifth row
+                { "LEFT", null },
+                { "4", "T" },
+                { "5", "U" },
+                { "6", "V" },
+                { "*", null },
+                // Sixth row
+                { "RIGHT", null },
+                { "1", "W" },
+                { "2", "X" },
+                { "3", "Y" },
+                { "-", null },
+                // Seventh row
+                { "C", null },
+                { "0", "Z" },
+                { ".", "i" },
+                { "R/S", null },
+                { "+", null },
+            };
         }
 
         private void HandleButton(string button)
@@ -237,6 +288,41 @@ namespace HP32SII.Logic
                 case State.Right:
                     state = rightKeyboard[button]();
                     break;
+                case State.Store:
+                    if (alphabeticKeyboard[button] != null)
+                    {
+                        BottomStatus = "";
+                        Display = "STO  {alphabeticKeyboard[button]}";
+                        Task.Delay(500).Wait();
+
+                        calculator.Store(alphabeticKeyboard[button], output.ToDouble());
+                        Display = output.ToString();
+                        state = GoToDefault();
+                    }
+                    else if (button == "C" || button == "BACK")
+                    {
+                        Display = output.ToString();
+                        state = GoToDefault();
+                    }
+                    break;
+                case State.Recall:
+                    if (alphabeticKeyboard[button] != null)
+                    {
+                        BottomStatus = "";
+                        Display = "RCL  {alphabeticKeyboard[button]}";
+                        Task.Delay(500).Wait();
+
+                        var recalled = calculator.Recall(alphabeticKeyboard[button]);
+                        output.FromDouble(recalled);
+                        Display = output.ToString();
+                        state = GoToDefault();
+                    }
+                    else if (button == "C" || button == "BACK")
+                    {
+                        Display = output.ToString();
+                        state = GoToDefault();
+                    }
+                    break;
                 default:
                     break;
             }
@@ -246,7 +332,6 @@ namespace HP32SII.Logic
         {
             return state;
         }
-
 
         private State Enter()
         {
@@ -266,6 +351,7 @@ namespace HP32SII.Logic
         private State GoToDefault()
         {
             TopStatus = "";
+            BottomStatus = "";
             return State.Default;
         }
 
@@ -350,6 +436,32 @@ namespace HP32SII.Logic
             output.FromDouble(result);
             Display = output.ToString();
             return GoToDefault();
+        }
+
+        private State Store()
+        {
+            if (output.IsEditable)
+            {
+                output.Freeze();
+                pushAtNextAppend = true;
+            }
+
+            Display = "STO  _";
+            BottomStatus = "A..Z";
+            return State.Store;
+        }
+
+        private State Recall()
+        {
+            if (output.IsEditable)
+            {
+                output.Freeze();
+            }
+            calculator.Push(output.ToDouble());
+
+            Display = "RCL  _";
+            BottomStatus = "A..Z";
+            return State.Recall;
         }
     }
 }

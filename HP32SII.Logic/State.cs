@@ -12,5 +12,7 @@ namespace HP32SII.Logic
         Default,
         Left,
         Right,
+        Store,
+        Recall,
     }
 }
