@@ -101,13 +101,13 @@ namespace HP32SII.Logic
                 { "9", numeric.Compose("9") },
                 { "/", dyadic.Compose(calculator.Divide) },
                 // Fifth row
-                { "LEFT", LeftArrowDefaultOrRightState },
+                { "LEFT", GoToLeft },
                 { "4", numeric.Compose("4") },
                 { "5", numeric.Compose("5") },
                 { "6", numeric.Compose("6") },
                 { "*", dyadic.Compose(calculator.Multiply) },
                 // Sixth row
-                { "RIGHT", RightArrowDefaultOrLeftState },
+                { "RIGHT", GoToRight },
                 { "1", numeric.Compose("1") },
                 { "2", numeric.Compose("2") },
                 { "3", numeric.Compose("3") },
@@ -149,13 +149,13 @@ namespace HP32SII.Logic
                 { "9", DoNothing },
                 { "/", DoNothing },
                 // Fifth row
-                { "LEFT", LeftArrowLeftState },
+                { "LEFT", GoToDefault },
                 { "4", DoNothing },
                 { "5", DoNothing },
                 { "6", monadic.Compose(calculator.ToDegree) },
                 { "*", DoNothing },
                 // Sixth row
-                { "RIGHT", RightArrowDefaultOrLeftState },
+                { "RIGHT", GoToRight },
                 { "1", monadic.Compose(calculator.ToKilo) },
                 { "2", monadic.Compose(calculator.ToCelsius) },
                 { "3", monadic.Compose(calculator.ToCentimeter) },
@@ -197,13 +197,13 @@ namespace HP32SII.Logic
                 { "9", DoNothing },
                 { "/", DoNothing },
                 // Fifth row
-                { "LEFT", LeftArrowLeftState },
+                { "LEFT", GoToDefault },
                 { "4", DoNothing },
                 { "5", DoNothing },
                 { "6", monadic.Compose(calculator.ToRadian) },
                 { "*", DoNothing },
                 // Sixth row
-                { "RIGHT", RightArrowDefaultOrLeftState },
+                { "RIGHT", GoToRight },
                 { "1", monadic.Compose(calculator.ToPound) },
                 { "2", monadic.Compose(calculator.ToFahrenheit) },
                 { "3", monadic.Compose(calculator.ToInch) },
@@ -240,26 +240,6 @@ namespace HP32SII.Logic
                 default:
                     break;
             }
-
-            switch (state)
-            {
-                case State.Off:
-                    Display = "";
-                    TopStatus = "";
-                    BottomStatus = "";
-                    break;
-                case State.Default:
-                    TopStatus = "";
-                    break;
-                case State.Left:
-                    TopStatus = "  <=";
-                    break;
-                case State.Right:
-                    TopStatus = "        =>";
-                    break;
-                default:
-                    break;
-            }
         }
 
         private State DoNothing()
@@ -274,27 +254,25 @@ namespace HP32SII.Logic
             output.Freeze();
             calculator.Push(output.ToDouble());
             Display = output.ToString();
-            return State.Default;
+            return GoToDefault();
         }
 
-        private State LeftArrowDefaultOrRightState()
+        private State GoToLeft()
         {
+            TopStatus = "  <=";
             return State.Left;
         }
 
-        private State LeftArrowLeftState()
+        private State GoToDefault()
         {
+            TopStatus = "";
             return State.Default;
         }
 
-        private State RightArrowDefaultOrLeftState()
+        private State GoToRight()
         {
+            TopStatus = "        =>";
             return State.Right;
-        }
-
-        private State RightArrowRightState()
-        {
-            return State.Default;
         }
 
         private State ChangeSign()
@@ -305,7 +283,7 @@ namespace HP32SII.Logic
             {
                 pushAtNextAppend = true;
             }
-            return State.Default;
+            return GoToDefault();
         }
 
         private State NumericKey(string button)
@@ -317,7 +295,7 @@ namespace HP32SII.Logic
             }
             output.AppendDigit(button);
             Display = output.ToString();
-            return State.Default;
+            return GoToDefault();
         }
 
         private State HandleDot()
@@ -329,7 +307,7 @@ namespace HP32SII.Logic
             }
             output.AppendDot();
             Display = output.ToString();
-            return State.Default;
+            return GoToDefault();
         }
 
         private State Clear()
@@ -337,11 +315,14 @@ namespace HP32SII.Logic
             pushAtNextAppend = false;
             output.Clear();
             Display = output.ToString();
-            return State.Default;
+            return GoToDefault();
         }
 
         private State TurnOff()
         {
+            Display = "";
+            TopStatus = "";
+            BottomStatus = "";
             return State.Off;
         }
 
@@ -350,7 +331,7 @@ namespace HP32SII.Logic
             pushAtNextAppend = false;
             output.Backspace();
             Display = output.ToString();
-            return State.Default;
+            return GoToDefault();
         }
 
         private State MonadicOperation(Func<double, double> operation)
@@ -359,7 +340,7 @@ namespace HP32SII.Logic
             var result = operation(output.ToDouble());
             output.FromDouble(result);
             Display = output.ToString();
-            return State.Default;
+            return GoToDefault();
         }
 
         private State DyadicOperation(Func<double, double> operation)
@@ -368,7 +349,7 @@ namespace HP32SII.Logic
             var result = operation(output.ToDouble());
             output.FromDouble(result);
             Display = output.ToString();
-            return State.Default;
+            return GoToDefault();
         }
     }
 }

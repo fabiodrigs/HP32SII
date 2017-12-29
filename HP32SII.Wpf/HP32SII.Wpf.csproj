@@ -94,7 +94,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\HP32SII.Calculator\HP32SII.Logic.csproj">
+    <ProjectReference Include="..\HP32SII.Logic\HP32SII.Logic.csproj">
       <Project>{e672f6d9-f20b-4cc0-9829-cdb64dbe014a}</Project>
       <Name>HP32SII.Logic</Name>
     </ProjectReference>
