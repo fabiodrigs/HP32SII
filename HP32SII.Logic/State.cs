@@ -14,5 +14,6 @@ namespace HP32SII.Logic
         Right,
         Store,
         Recall,
+        WaitForDefault,
     }
 }

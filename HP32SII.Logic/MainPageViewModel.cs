@@ -1,8 +1,7 @@
-﻿using GalaSoft.MvvmLight;
+﻿using AdvancedTimer.Forms.Plugin.Abstractions;
+using GalaSoft.MvvmLight;
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 
@@ -10,6 +9,9 @@ namespace HP32SII.Logic
 {
     public class MainPageViewModel : ViewModelBase
     {
+        private const int DisplayLetterIntervalInMs = 200;
+        private const int InactivityIntervalInMs = 10000;
+
         private State state = State.Default;
         private Dictionary<string, Func<State>> defaultKeyboard;
         private Dictionary<string, Func<State>> leftKeyboard;
@@ -18,6 +20,7 @@ namespace HP32SII.Logic
         private Calculator calculator = new Calculator();
         private Output output = new Output();
         private bool pushAtNextAppend = false;
+        private IAdvancedTimer timer = DependencyService.Get<IAdvancedTimer>();
 
         public ICommand ButtonCommand { get; private set; }
 
@@ -70,6 +73,8 @@ namespace HP32SII.Logic
         public MainPageViewModel()
         {
             ButtonCommand = new Command<string>(HandleButton);
+            timer.initTimer(InactivityIntervalInMs, TimerElapsed, false);
+            timer.startTimer();
 
             Func<Func<double, double>, State> monadic = MonadicOperation;
             Func<Func<double, double>, State> dyadic = DyadicOperation;
@@ -268,15 +273,38 @@ namespace HP32SII.Logic
             };
         }
 
+        private void TimerElapsed(object sender, EventArgs e)
+        {
+            if (state == State.WaitForDefault)
+            {
+                Display = output.ToString();
+                timer.setInterval(InactivityIntervalInMs);
+                timer.startTimer();
+                state = GoToDefault();
+            }
+            else
+            {
+                state = TurnOff();
+            }
+
+        }
+
         private void HandleButton(string button)
         {
+            if (state != State.Off || button == "C")
+            {
+                timer.stopTimer();
+                timer.startTimer();
+            }
+
             switch (state)
             {
                 case State.Off:
                     if (button == "C")
                     {
-                        Clear();
-                        state = State.Default;
+                        pushAtNextAppend = false;
+                        Display = output.ToString();
+                        state = GoToDefault();
                     }
                     break;
                 case State.Default:
@@ -292,12 +320,12 @@ namespace HP32SII.Logic
                     if (alphabeticKeyboard[button] != null)
                     {
                         BottomStatus = "";
-                        Display = "STO  {alphabeticKeyboard[button]}";
-                        Task.Delay(500).Wait();
-
+                        Display = $"STO  {alphabeticKeyboard[button]}";
                         calculator.Store(alphabeticKeyboard[button], output.ToDouble());
-                        Display = output.ToString();
-                        state = GoToDefault();
+                        timer.stopTimer();
+                        timer.setInterval(DisplayLetterIntervalInMs);
+                        timer.startTimer();
+                        state = State.WaitForDefault;
                     }
                     else if (button == "C" || button == "BACK")
                     {
@@ -309,19 +337,21 @@ namespace HP32SII.Logic
                     if (alphabeticKeyboard[button] != null)
                     {
                         BottomStatus = "";
-                        Display = "RCL  {alphabeticKeyboard[button]}";
-                        Task.Delay(500).Wait();
-
+                        Display = $"RCL  {alphabeticKeyboard[button]}";
                         var recalled = calculator.Recall(alphabeticKeyboard[button]);
                         output.FromDouble(recalled);
-                        Display = output.ToString();
-                        state = GoToDefault();
+                        timer.stopTimer();
+                        timer.setInterval(DisplayLetterIntervalInMs);
+                        timer.startTimer();
+                        state = State.WaitForDefault;
                     }
                     else if (button == "C" || button == "BACK")
                     {
                         Display = output.ToString();
                         state = GoToDefault();
                     }
+                    break;
+                case State.WaitForDefault:
                     break;
                 default:
                     break;

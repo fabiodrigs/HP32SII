@@ -12,7 +12,7 @@ namespace HP32SII
         public App()
         {
             InitializeComponent();
-            MainPage = new HP32SII.MainPage();
+            MainPage = new MainPage();
         }
 
         protected override void OnStart()
