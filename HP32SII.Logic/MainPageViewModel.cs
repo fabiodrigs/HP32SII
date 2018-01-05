@@ -10,7 +10,7 @@ namespace HP32SII.Logic
     public class MainPageViewModel : ViewModelBase
     {
         private const int DisplayLetterIntervalInMs = 200;
-        private const int InactivityIntervalInMs = 10000;
+        private const int InactivityIntervalInMs = 10 * 60 * 1000;
 
         private State state = State.Default;
         private Dictionary<string, Func<State>> defaultKeyboard;
@@ -24,49 +24,47 @@ namespace HP32SII.Logic
 
         public ICommand ButtonCommand { get; private set; }
 
-        #region TopStatus property
+        #region Properties
         private string topStatus = "";
         public string TopStatus
         {
-            get
-            {
-                return topStatus;
-            }
-            set
-            {
-                topStatus = value;
-                RaisePropertyChanged(nameof(TopStatus));
-            }
+            get { return topStatus; }
+            private set { Set(ref topStatus, value); }
         }
-        #endregion
-        #region BottomStatus property
+
+        private bool isTopStatusVisible = true;
+        public bool IsTopStatusVisible
+        {
+            get { return isTopStatusVisible; }
+            private set { Set(ref isTopStatusVisible, value); }
+        }
+
         private string bottomStatus = "";
         public string BottomStatus
         {
-            get
-            {
-                return bottomStatus;
-            }
-            set
-            {
-                bottomStatus = value;
-                RaisePropertyChanged(nameof(BottomStatus));
-            }
+            get { return bottomStatus; }
+            private set { Set(ref bottomStatus, value); }
         }
-        #endregion
-        #region Display property
+
+        private bool isBottomStatusVisible = true;
+        public bool IsBottomStatusVisible
+        {
+            get { return isBottomStatusVisible; }
+            private set { Set(ref isBottomStatusVisible, value); }
+        }
+
         private string display = " 0";
         public string Display
         {
-            get
-            {
-                return display;
-            }
-            set
-            {
-                display = value;
-                RaisePropertyChanged(nameof(Display));
-            }
+            get { return display; }
+            private set { Set(ref display, value); }
+        }
+
+        private bool isDisplayVisible = true;
+        public bool IsDisplayVisible
+        {
+            get { return isDisplayVisible; }
+            private set { Set(ref isDisplayVisible, value); }
         }
         #endregion
 
@@ -205,13 +203,13 @@ namespace HP32SII.Logic
                 { "9", DoNothing },
                 { "/", DoNothing },
                 // Fifth row
-                { "LEFT", GoToDefault },
+                { "LEFT", GoToLeft },
                 { "4", DoNothing },
                 { "5", DoNothing },
                 { "6", monadic.Compose(calculator.ToRadian) },
                 { "*", DoNothing },
                 // Sixth row
-                { "RIGHT", GoToRight },
+                { "RIGHT", GoToDefault },
                 { "1", monadic.Compose(calculator.ToPound) },
                 { "2", monadic.Compose(calculator.ToFahrenheit) },
                 { "3", monadic.Compose(calculator.ToInch) },
@@ -303,7 +301,7 @@ namespace HP32SII.Logic
                     if (button == "C")
                     {
                         pushAtNextAppend = false;
-                        Display = output.ToString();
+                        TurnScreenOn();
                         state = GoToDefault();
                     }
                     break;
@@ -436,9 +434,7 @@ namespace HP32SII.Logic
 
         private State TurnOff()
         {
-            Display = "";
-            TopStatus = "";
-            BottomStatus = "";
+            TurnScreenOff();
             return State.Off;
         }
 
@@ -492,6 +488,20 @@ namespace HP32SII.Logic
             Display = "RCL  _";
             BottomStatus = "A..Z";
             return State.Recall;
+        }
+
+        private void TurnScreenOff()
+        {
+            IsDisplayVisible = false;
+            IsTopStatusVisible = false;
+            IsBottomStatusVisible = false;
+        }
+
+        private void TurnScreenOn()
+        {
+            IsDisplayVisible = true;
+            IsTopStatusVisible = true;
+            IsBottomStatusVisible = true;
         }
     }
 }

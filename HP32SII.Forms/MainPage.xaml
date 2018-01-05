@@ -36,13 +36,13 @@
                     <RowDefinition Height="2.5*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="2*"/>
                     <ColumnDefinition Width="20*"/>
-                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="2*"/>
                 </Grid.ColumnDefinitions>
-                <Label Grid.Row="0" Grid.Column="1" Text="{Binding TopStatus}" FontSize="Micro" FontAttributes="Bold" />
-                <Label Grid.Row="1" Grid.Column="1" Text="{Binding Display}" FontSize="Large" FontAttributes="Bold, Italic" />
-                <Label Grid.Row="2" Grid.Column="1" Text="{Binding BottomStatus}" FontSize="Micro" FontAttributes="Bold" />
+                <Label Grid.Row="0" Grid.Column="1" Text="{Binding TopStatus}" IsVisible="{Binding IsTopStatusVisible}" FontSize="Micro" FontAttributes="Bold"  />
+                <Label Grid.Row="1" Grid.Column="1" Text="{Binding Display}" IsVisible="{Binding IsDisplayVisible}" FontSize="Large" FontAttributes="Bold, Italic" />
+                <Label Grid.Row="2" Grid.Column="1" Text="{Binding BottomStatus}" IsVisible="{Binding IsBottomVisible}" FontSize="Micro" FontAttributes="Bold" />
             </Grid>
             <!--Top keyboard-->
             <Grid Grid.Row="3" Grid.Column="1">
