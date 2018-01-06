@@ -98,7 +98,7 @@
                 <!--Fourth row-->
                 <Button Grid.Row="0" Grid.Column="0" CommandParameter="{Binding Buttons.Xeq}" Command="{Binding ButtonCommand}" />
                 <Button Grid.Row="0" Grid.Column="1" CommandParameter="{Binding Buttons.Seven}" Command="{Binding ButtonCommand}" />
-                <Button Grid.Row="0" Grid.Column="2" CommandParameter="{Binding Buttons.Eigth}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="0" Grid.Column="2" CommandParameter="{Binding Buttons.Eight}" Command="{Binding ButtonCommand}" />
                 <Button Grid.Row="0" Grid.Column="3" CommandParameter="{Binding Buttons.Nine}" Command="{Binding ButtonCommand}" />
                 <Button Grid.Row="0" Grid.Column="4" CommandParameter="{Binding Buttons.Divide}" Command="{Binding ButtonCommand}" />
                 <!--Fifth row-->

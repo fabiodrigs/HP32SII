@@ -27,7 +27,7 @@ namespace HP32SII.Logic
         // Fourth row
         public Button Xeq { get;  } = new Button( "XEQ", null );
         public Button Seven { get; } = new Button( "7", "Q" );
-        public Button Eigth { get; } = new Button( "8", "R" );
+        public Button Eight { get; } = new Button( "8", "R" );
         public Button Nine { get; } = new Button( "9", "S" );
         public Button Divide { get; } = new Button( "/", null );
         // Fifth row
