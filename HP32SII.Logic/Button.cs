@@ -4,11 +4,11 @@ namespace HP32SII.Logic
 {
     class Button
     {
-        public Func<string, State> DefaultAction;
-        public Func<string, State> LeftAction;
-        public Func<string, State> RightAction;
+        public Func<string, KeyboardState> DefaultAction;
+        public Func<string, KeyboardState> LeftAction;
+        public Func<string, KeyboardState> RightAction;
 
-        public Button(Func<string, State> defaultAction, Func<string, State> leftAction, Func<string, State> rightAction)
+        public Button(Func<string, KeyboardState> defaultAction, Func<string, KeyboardState> leftAction, Func<string, KeyboardState> rightAction)
         {
             DefaultAction = defaultAction;
             LeftAction = leftAction;

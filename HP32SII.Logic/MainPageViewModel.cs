@@ -12,10 +12,11 @@ namespace HP32SII.Logic
         private const int DisplayLetterIntervalInMs = 200;
         private const int InactivityIntervalInMs = 10 * 60 * 1000;
 
-        private State state = State.Default;
-        private Dictionary<string, Func<State>> defaultKeyboard;
-        private Dictionary<string, Func<State>> leftKeyboard;
-        private Dictionary<string, Func<State>> rightKeyboard;
+        private EscapeMode escapeMode = EscapeMode.None;
+        private KeyboardState keyboardState = KeyboardState.Default;
+        private Dictionary<string, Func<KeyboardState>> defaultKeyboard;
+        private Dictionary<string, Func<KeyboardState>> leftKeyboard;
+        private Dictionary<string, Func<KeyboardState>> rightKeyboard;
         private Dictionary<string, string> alphabeticKeyboard;
         private Calculator calculator = new Calculator();
         private Output output = new Output();
@@ -74,11 +75,11 @@ namespace HP32SII.Logic
             timer.initTimer(InactivityIntervalInMs, TimerElapsed, false);
             timer.startTimer();
 
-            Func<Func<double, double>, State> monadic = MonadicOperation;
-            Func<Func<double, double>, State> dyadic = DyadicOperation;
-            Func<string, State> numeric = NumericKey;
+            Func<Func<double, double>, KeyboardState> monadic = MonadicOperation;
+            Func<Func<double, double>, KeyboardState> dyadic = DyadicOperation;
+            Func<string, KeyboardState> numeric = NumericKey;
 
-            defaultKeyboard = new Dictionary<string, Func<State>>
+            defaultKeyboard = new Dictionary<string, Func<KeyboardState>>
             {
                 // First row
                 { "SQRT", monadic.Compose(calculator.SquareRoot) },
@@ -107,13 +108,11 @@ namespace HP32SII.Logic
                 { "9", numeric.Compose("9") },
                 { "/", dyadic.Compose(calculator.Divide) },
                 // Fifth row
-                { "LEFT", GoToLeft },
                 { "4", numeric.Compose("4") },
                 { "5", numeric.Compose("5") },
                 { "6", numeric.Compose("6") },
                 { "*", dyadic.Compose(calculator.Multiply) },
                 // Sixth row
-                { "RIGHT", GoToRight },
                 { "1", numeric.Compose("1") },
                 { "2", numeric.Compose("2") },
                 { "3", numeric.Compose("3") },
@@ -126,14 +125,14 @@ namespace HP32SII.Logic
                 { "+", dyadic.Compose(calculator.Add) },
             };
 
-            leftKeyboard = new Dictionary<string, Func<State>>
+            leftKeyboard = new Dictionary<string, Func<KeyboardState>>
             {
                 // First row
-                { "SQRT", monadic.Compose(calculator.SquareRoot) },
-                { "EXP", monadic.Compose(calculator.Exponential) },
-                { "LN", monadic.Compose(calculator.NaturalLogarithm) },
+                { "SQRT", monadic.Compose(calculator.Square) },
+                { "EXP", monadic.Compose(calculator.PowerOfTen) },
+                { "LN", monadic.Compose(calculator.LogBase10) },
                 { "POW", DoNothing },
-                { "1/X", monadic.Compose(calculator.Invert) },
+                { "1/X", DoNothing },
                 { "SUM", DoNothing },
                 // Second row
                 { "STO", DoNothing },
@@ -155,16 +154,14 @@ namespace HP32SII.Logic
                 { "9", DoNothing },
                 { "/", DoNothing },
                 // Fifth row
-                { "LEFT", GoToDefault },
                 { "4", DoNothing },
                 { "5", DoNothing },
-                { "6", monadic.Compose(calculator.ToDegree) },
+                { "6", monadic.Compose(calculator.ToRadian) },
                 { "*", DoNothing },
                 // Sixth row
-                { "RIGHT", GoToRight },
-                { "1", monadic.Compose(calculator.ToKilo) },
-                { "2", monadic.Compose(calculator.ToCelsius) },
-                { "3", monadic.Compose(calculator.ToCentimeter) },
+                { "1", monadic.Compose(calculator.ToPound) },
+                { "2", monadic.Compose(calculator.ToFahrenheit) },
+                { "3", monadic.Compose(calculator.ToInch) },
                 { "-", DoNothing },
                 // Seventh row
                 { "C", TurnOff },
@@ -174,7 +171,7 @@ namespace HP32SII.Logic
                 { "+", DoNothing },
             };
 
-            rightKeyboard = new Dictionary<string, Func<State>>
+            rightKeyboard = new Dictionary<string, Func<KeyboardState>>
             {
                 // First row
                 { "SQRT", monadic.Compose(calculator.Square) },
@@ -203,13 +200,11 @@ namespace HP32SII.Logic
                 { "9", DoNothing },
                 { "/", DoNothing },
                 // Fifth row
-                { "LEFT", GoToLeft },
                 { "4", DoNothing },
                 { "5", DoNothing },
                 { "6", monadic.Compose(calculator.ToRadian) },
                 { "*", DoNothing },
                 // Sixth row
-                { "RIGHT", GoToDefault },
                 { "1", monadic.Compose(calculator.ToPound) },
                 { "2", monadic.Compose(calculator.ToFahrenheit) },
                 { "3", monadic.Compose(calculator.ToInch) },
@@ -273,48 +268,77 @@ namespace HP32SII.Logic
 
         private void TimerElapsed(object sender, EventArgs e)
         {
-            if (state == State.WaitForDefault)
+            if (keyboardState == KeyboardState.WaitForDefault)
             {
                 Display = output.ToString();
                 timer.setInterval(InactivityIntervalInMs);
                 timer.startTimer();
-                state = GoToDefault();
+                keyboardState = GoToDefault();
             }
             else
             {
-                state = TurnOff();
+                keyboardState = TurnOff();
             }
 
         }
 
         private void HandleButton(string button)
         {
-            if (state != State.Off || button == "C")
+            if (keyboardState == KeyboardState.Off && button != "C")
+                return;
+
+            RestartInactivityTimer();
+
+            if (button == "LEFT")
             {
-                timer.stopTimer();
-                timer.startTimer();
+                if (escapeMode == EscapeMode.Left)
+                {
+                    escapeMode = ClearEscapeMode();
+                }
+                else
+                {
+                    escapeMode = GoToLeft();
+                }
+                return;
+            }
+            else if (button == "RIGHT")
+            {
+                if (escapeMode == EscapeMode.Right)
+                {
+                    escapeMode = ClearEscapeMode();
+                }
+                else
+                {
+                    escapeMode = GoToRight();
+                }
+                return;
             }
 
-            switch (state)
+            switch (keyboardState)
             {
-                case State.Off:
+                case KeyboardState.Off:
                     if (button == "C")
                     {
                         pushAtNextAppend = false;
                         TurnScreenOn();
-                        state = GoToDefault();
+                        keyboardState = GoToDefault();
                     }
                     break;
-                case State.Default:
-                    state = defaultKeyboard[button]();
+                case KeyboardState.Default:
+                    if (escapeMode == EscapeMode.None)
+                    {
+                        keyboardState = defaultKeyboard[button]();
+                    }
+                    else if (escapeMode == EscapeMode.Left)
+                    {
+                        keyboardState = leftKeyboard[button]();
+                    }
+                    else
+                    {
+                        keyboardState = rightKeyboard[button]();
+                    }
                     break;
-                case State.Left:
-                    state = leftKeyboard[button]();
-                    break;
-                case State.Right:
-                    state = rightKeyboard[button]();
-                    break;
-                case State.Store:
+                case KeyboardState.Store:
                     if (alphabeticKeyboard[button] != null)
                     {
                         BottomStatus = "";
@@ -323,15 +347,15 @@ namespace HP32SII.Logic
                         timer.stopTimer();
                         timer.setInterval(DisplayLetterIntervalInMs);
                         timer.startTimer();
-                        state = State.WaitForDefault;
+                        keyboardState = KeyboardState.WaitForDefault;
                     }
                     else if (button == "C" || button == "BACK")
                     {
                         Display = output.ToString();
-                        state = GoToDefault();
+                        keyboardState = GoToDefault();
                     }
                     break;
-                case State.Recall:
+                case KeyboardState.Recall:
                     if (alphabeticKeyboard[button] != null)
                     {
                         BottomStatus = "";
@@ -341,27 +365,29 @@ namespace HP32SII.Logic
                         timer.stopTimer();
                         timer.setInterval(DisplayLetterIntervalInMs);
                         timer.startTimer();
-                        state = State.WaitForDefault;
+                        keyboardState = KeyboardState.WaitForDefault;
                     }
                     else if (button == "C" || button == "BACK")
                     {
                         Display = output.ToString();
-                        state = GoToDefault();
+                        keyboardState = GoToDefault();
                     }
                     break;
-                case State.WaitForDefault:
+                case KeyboardState.WaitForDefault:
                     break;
                 default:
                     break;
             }
+
+            escapeMode = ClearEscapeMode();
         }
 
-        private State DoNothing()
+        private KeyboardState DoNothing()
         {
-            return state;
+            return keyboardState;
         }
 
-        private State Enter()
+        private KeyboardState Enter()
         {
             pushAtNextAppend = false;
             output.Freeze();
@@ -370,26 +396,31 @@ namespace HP32SII.Logic
             return GoToDefault();
         }
 
-        private State GoToLeft()
+        private EscapeMode GoToLeft()
         {
             TopStatus = "  <=";
-            return State.Left;
+            return EscapeMode.Left;
         }
 
-        private State GoToDefault()
+        private EscapeMode ClearEscapeMode()
+        {
+            return EscapeMode.None;
+        }
+
+        private KeyboardState GoToDefault()
         {
             TopStatus = "";
             BottomStatus = "";
-            return State.Default;
+            return KeyboardState.Default;
         }
 
-        private State GoToRight()
+        private EscapeMode GoToRight()
         {
             TopStatus = "        =>";
-            return State.Right;
+            return EscapeMode.Right;
         }
 
-        private State ChangeSign()
+        private KeyboardState ChangeSign()
         {
             output.ChangeSign();
             Display = output.ToString();
@@ -400,7 +431,7 @@ namespace HP32SII.Logic
             return GoToDefault();
         }
 
-        private State NumericKey(string button)
+        private KeyboardState NumericKey(string button)
         {
             if (pushAtNextAppend)
             {
@@ -412,7 +443,7 @@ namespace HP32SII.Logic
             return GoToDefault();
         }
 
-        private State HandleDot()
+        private KeyboardState HandleDot()
         {
             if (pushAtNextAppend)
             {
@@ -424,7 +455,7 @@ namespace HP32SII.Logic
             return GoToDefault();
         }
 
-        private State Clear()
+        private KeyboardState Clear()
         {
             pushAtNextAppend = false;
             output.Clear();
@@ -432,13 +463,13 @@ namespace HP32SII.Logic
             return GoToDefault();
         }
 
-        private State TurnOff()
+        private KeyboardState TurnOff()
         {
             TurnScreenOff();
-            return State.Off;
+            return KeyboardState.Off;
         }
 
-        private State Backspace()
+        private KeyboardState Backspace()
         {
             pushAtNextAppend = false;
             output.Backspace();
@@ -446,7 +477,7 @@ namespace HP32SII.Logic
             return GoToDefault();
         }
 
-        private State MonadicOperation(Func<double, double> operation)
+        private KeyboardState MonadicOperation(Func<double, double> operation)
         {
             pushAtNextAppend = true;
             var result = operation(output.ToDouble());
@@ -455,7 +486,7 @@ namespace HP32SII.Logic
             return GoToDefault();
         }
 
-        private State DyadicOperation(Func<double, double> operation)
+        private KeyboardState DyadicOperation(Func<double, double> operation)
         {
             pushAtNextAppend = false;
             var result = operation(output.ToDouble());
@@ -464,7 +495,7 @@ namespace HP32SII.Logic
             return GoToDefault();
         }
 
-        private State Store()
+        private KeyboardState Store()
         {
             if (output.IsEditable)
             {
@@ -474,10 +505,10 @@ namespace HP32SII.Logic
 
             Display = "STO  _";
             BottomStatus = "A..Z";
-            return State.Store;
+            return KeyboardState.Store;
         }
 
-        private State Recall()
+        private KeyboardState Recall()
         {
             if (output.IsEditable)
             {
@@ -487,7 +518,7 @@ namespace HP32SII.Logic
 
             Display = "RCL  _";
             BottomStatus = "A..Z";
-            return State.Recall;
+            return KeyboardState.Recall;
         }
 
         private void TurnScreenOff()
@@ -502,6 +533,12 @@ namespace HP32SII.Logic
             IsDisplayVisible = true;
             IsTopStatusVisible = true;
             IsBottomStatusVisible = true;
+        }
+
+        private void RestartInactivityTimer()
+        {
+            timer.stopTimer();
+            timer.startTimer();
         }
     }
 }
