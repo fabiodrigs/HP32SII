@@ -149,15 +149,15 @@ namespace HP32SII.Logic
             Buttons.Xeq.LeftOperation = DoNothing;
             Buttons.Xeq.RightOperation = DoNothing;
 
-            Buttons.Seven.DefaultOperation = numeric.Compose("7");
+            Buttons.Seven.DefaultOperation = numeric.Compose(Buttons.Seven.Name);
             Buttons.Seven.LeftOperation = DoNothing;
             Buttons.Seven.RightOperation = DoNothing;
 
-            Buttons.Eight.DefaultOperation = numeric.Compose("8");
+            Buttons.Eight.DefaultOperation = numeric.Compose(Buttons.Eight.Name);
             Buttons.Eight.LeftOperation = DoNothing;
             Buttons.Eight.RightOperation = DoNothing;
 
-            Buttons.Nine.DefaultOperation = numeric.Compose("9");
+            Buttons.Nine.DefaultOperation = numeric.Compose(Buttons.Nine.Name);
             Buttons.Nine.LeftOperation = DoNothing;
             Buttons.Nine.RightOperation = DoNothing;
 
@@ -165,15 +165,15 @@ namespace HP32SII.Logic
             Buttons.Divide.LeftOperation = DoNothing;
             Buttons.Divide.RightOperation = DoNothing;
 
-            Buttons.Four.DefaultOperation = numeric.Compose("4");
+            Buttons.Four.DefaultOperation = numeric.Compose(Buttons.Four.Name);
             Buttons.Four.LeftOperation = DoNothing;
             Buttons.Four.RightOperation = DoNothing;
 
-            Buttons.Five.DefaultOperation = numeric.Compose("5");
+            Buttons.Five.DefaultOperation = numeric.Compose(Buttons.Five.Name);
             Buttons.Five.LeftOperation = DoNothing;
             Buttons.Five.RightOperation = DoNothing;
 
-            Buttons.Six.DefaultOperation = numeric.Compose("6");
+            Buttons.Six.DefaultOperation = numeric.Compose(Buttons.Six.Name);
             Buttons.Six.LeftOperation = monadic.Compose(calculator.ToRadian);
             Buttons.Six.RightOperation = monadic.Compose(calculator.ToRadian);
 
@@ -181,15 +181,15 @@ namespace HP32SII.Logic
             Buttons.Multiply.LeftOperation = DoNothing;
             Buttons.Multiply.RightOperation = DoNothing;
 
-            Buttons.One.DefaultOperation = numeric.Compose("1");
+            Buttons.One.DefaultOperation = numeric.Compose(Buttons.One.Name);
             Buttons.One.LeftOperation = monadic.Compose(calculator.ToPound);
             Buttons.One.RightOperation = monadic.Compose(calculator.ToPound);
 
-            Buttons.Two.DefaultOperation = numeric.Compose("2");
+            Buttons.Two.DefaultOperation = numeric.Compose(Buttons.Two.Name);
             Buttons.Two.LeftOperation = monadic.Compose(calculator.ToFahrenheit);
             Buttons.Two.RightOperation = monadic.Compose(calculator.ToFahrenheit);
 
-            Buttons.Three.DefaultOperation = numeric.Compose("3");
+            Buttons.Three.DefaultOperation = numeric.Compose(Buttons.Three.Name);
             Buttons.Three.LeftOperation = monadic.Compose(calculator.ToInch);
             Buttons.Three.RightOperation = monadic.Compose(calculator.ToInch);
 
@@ -201,7 +201,7 @@ namespace HP32SII.Logic
             Buttons.Clear.LeftOperation = TurnOff;
             Buttons.Clear.RightOperation = TurnOff;
 
-            Buttons.Zero.DefaultOperation = numeric.Compose("0");
+            Buttons.Zero.DefaultOperation = numeric.Compose(Buttons.Zero.Name);
             Buttons.Zero.LeftOperation = DoNothing;
             Buttons.Zero.RightOperation = DoNothing;
 
@@ -232,7 +232,6 @@ namespace HP32SII.Logic
             {
                 keyboardState = TurnOff();
             }
-
         }
 
         private void HandleButton(Button button)

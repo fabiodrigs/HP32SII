@@ -4,8 +4,8 @@ namespace HP32SII.Logic
 {
     public class Button
     {
-        public string Name { get; set; }
-        public string Letter { get; set; }
+        public string Name { get; private set; }
+        public string Letter { get; private set; }
         public Func<KeyboardState> DefaultOperation { get; set; }
         public Func<KeyboardState> LeftOperation { get; set; }
         public Func<KeyboardState> RightOperation { get; set; }
