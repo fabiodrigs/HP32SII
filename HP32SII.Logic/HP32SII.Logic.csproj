@@ -41,6 +41,7 @@
     <Compile Include="EscapeMode.cs" />
     <Compile Include="Extensions\FuncExtensions.cs" />
     <Compile Include="FunctionalUnit.cs" />
+    <Compile Include="Buttons.cs" />
     <Compile Include="MainPageViewModel.cs" />
     <Compile Include="Output.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

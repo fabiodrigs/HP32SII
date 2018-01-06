@@ -60,25 +60,25 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <!--First row-->
-                <Button Grid.Row="0" Grid.Column="0" Command="{Binding ButtonCommand}" CommandParameter="SQRT" />
-                <Button Grid.Row="0" Grid.Column="1" Command="{Binding ButtonCommand}" CommandParameter="EXP" />
-                <Button Grid.Row="0" Grid.Column="2" Command="{Binding ButtonCommand}" CommandParameter="LN" />
-                <Button Grid.Row="0" Grid.Column="3" Command="{Binding ButtonCommand}" CommandParameter="POW" />
-                <Button Grid.Row="0" Grid.Column="4" Command="{Binding ButtonCommand}" CommandParameter="1/X" />
-                <Button Grid.Row="0" Grid.Column="5" Command="{Binding ButtonCommand}" CommandParameter="SUM" />
+                <Button Grid.Row="0" Grid.Column="0" CommandParameter="{Binding Buttons.Sqrt}" Command="{Binding ButtonCommand}"  />
+                <Button Grid.Row="0" Grid.Column="1" CommandParameter="{Binding Buttons.Exp}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="0" Grid.Column="2" CommandParameter="{Binding Buttons.Ln}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="0" Grid.Column="3" CommandParameter="{Binding Buttons.Pow}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="0" Grid.Column="4" CommandParameter="{Binding Buttons.Invert}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="0" Grid.Column="5" CommandParameter="{Binding Buttons.Sum}" Command="{Binding ButtonCommand}" />
                 <!--Second row-->
-                <Button Grid.Row="1" Grid.Column="0" Command="{Binding ButtonCommand}" CommandParameter="STO" />
-                <Button Grid.Row="1" Grid.Column="1" Command="{Binding ButtonCommand}" CommandParameter="RCL" />
-                <Button Grid.Row="1" Grid.Column="2" Command="{Binding ButtonCommand}" CommandParameter="R" />
-                <Button Grid.Row="1" Grid.Column="3" Command="{Binding ButtonCommand}" CommandParameter="SIN" />
-                <Button Grid.Row="1" Grid.Column="4" Command="{Binding ButtonCommand}" CommandParameter="COS" />
-                <Button Grid.Row="1" Grid.Column="5" Command="{Binding ButtonCommand}" CommandParameter="TAN" />
+                <Button Grid.Row="1" Grid.Column="0" CommandParameter="{Binding Buttons.Store}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="1" Grid.Column="1" CommandParameter="{Binding Buttons.Recall}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="1" Grid.Column="2" CommandParameter="{Binding Buttons.RollDown}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="1" Grid.Column="3" CommandParameter="{Binding Buttons.Sin}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="1" Grid.Column="4" CommandParameter="{Binding Buttons.Cos}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="1" Grid.Column="5" CommandParameter="{Binding Buttons.Tan}" Command="{Binding ButtonCommand}" />
                 <!--Third row-->
-                <Button Grid.Row="2" Grid.Column="0" Command="{Binding ButtonCommand}" CommandParameter="ENTER" Grid.ColumnSpan="2" />
-                <Button Grid.Row="2" Grid.Column="2" Command="{Binding ButtonCommand}" CommandParameter="SWAP" />
-                <Button Grid.Row="2" Grid.Column="3" Command="{Binding ButtonCommand}" CommandParameter="+/-" />
-                <Button Grid.Row="2" Grid.Column="4" Command="{Binding ButtonCommand}" CommandParameter="E" />
-                <Button Grid.Row="2" Grid.Column="5" Command="{Binding ButtonCommand}" CommandParameter="BACK" />
+                <Button Grid.Row="2" Grid.Column="0" CommandParameter="{Binding Buttons.Enter}" Command="{Binding ButtonCommand}" Grid.ColumnSpan="2" />
+                <Button Grid.Row="2" Grid.Column="2" CommandParameter="{Binding Buttons.Swap}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="2" Grid.Column="3" CommandParameter="{Binding Buttons.ChangeSign}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="2" Grid.Column="4" CommandParameter="{Binding Buttons.E}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="2" Grid.Column="5" CommandParameter="{Binding Buttons.Back}" Command="{Binding ButtonCommand}" />
             </Grid>
             <!--Bottom keyboard-->
             <Grid Grid.Row="4" Grid.Column="1">
@@ -96,29 +96,29 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <!--Fourth row-->
-                <Button Grid.Row="0" Grid.Column="0" Command="{Binding ButtonCommand}" CommandParameter="XEQ" />
-                <Button Grid.Row="0" Grid.Column="1" Command="{Binding ButtonCommand}" CommandParameter="7" />
-                <Button Grid.Row="0" Grid.Column="2" Command="{Binding ButtonCommand}" CommandParameter="8" />
-                <Button Grid.Row="0" Grid.Column="3" Command="{Binding ButtonCommand}" CommandParameter="9" />
-                <Button Grid.Row="0" Grid.Column="4" Command="{Binding ButtonCommand}" CommandParameter="/" />
+                <Button Grid.Row="0" Grid.Column="0" CommandParameter="{Binding Buttons.Xeq}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="0" Grid.Column="1" CommandParameter="{Binding Buttons.Seven}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="0" Grid.Column="2" CommandParameter="{Binding Buttons.Eigth}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="0" Grid.Column="3" CommandParameter="{Binding Buttons.Nine}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="0" Grid.Column="4" CommandParameter="{Binding Buttons.Divide}" Command="{Binding ButtonCommand}" />
                 <!--Fifth row-->
-                <Button Grid.Row="1" Grid.Column="0" Command="{Binding ButtonCommand}" CommandParameter="LEFT" />
-                <Button Grid.Row="1" Grid.Column="1" Command="{Binding ButtonCommand}" CommandParameter="4" />
-                <Button Grid.Row="1" Grid.Column="2" Command="{Binding ButtonCommand}" CommandParameter="5" />
-                <Button Grid.Row="1" Grid.Column="3" Command="{Binding ButtonCommand}" CommandParameter="6" />
-                <Button Grid.Row="1" Grid.Column="4" Command="{Binding ButtonCommand}" CommandParameter="*" />
+                <Button Grid.Row="1" Grid.Column="0" CommandParameter="{Binding Buttons.Left}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="1" Grid.Column="1" CommandParameter="{Binding Buttons.Four}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="1" Grid.Column="2" CommandParameter="{Binding Buttons.Five}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="1" Grid.Column="3" CommandParameter="{Binding Buttons.Six}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="1" Grid.Column="4" CommandParameter="{Binding Buttons.Multiply}" Command="{Binding ButtonCommand}" />
                 <!--Sixth row-->
-                <Button Grid.Row="2" Grid.Column="0" Command="{Binding ButtonCommand}" CommandParameter="RIGHT" />
-                <Button Grid.Row="2" Grid.Column="1" Command="{Binding ButtonCommand}" CommandParameter="1" />
-                <Button Grid.Row="2" Grid.Column="2" Command="{Binding ButtonCommand}" CommandParameter="2" />
-                <Button Grid.Row="2" Grid.Column="3" Command="{Binding ButtonCommand}" CommandParameter="3" />
-                <Button Grid.Row="2" Grid.Column="4" Command="{Binding ButtonCommand}" CommandParameter="-" />
+                <Button Grid.Row="2" Grid.Column="0" CommandParameter="{Binding Buttons.Right}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="2" Grid.Column="1" CommandParameter="{Binding Buttons.One}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="2" Grid.Column="2" CommandParameter="{Binding Buttons.Two}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="2" Grid.Column="3" CommandParameter="{Binding Buttons.Three}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="2" Grid.Column="4" CommandParameter="{Binding Buttons.Subtract}" Command="{Binding ButtonCommand}" />
                 <!--Seventh row-->
-                <Button Grid.Row="3" Grid.Column="0" Command="{Binding ButtonCommand}" CommandParameter="C" />
-                <Button Grid.Row="3" Grid.Column="1" Command="{Binding ButtonCommand}" CommandParameter="0" />
-                <Button Grid.Row="3" Grid.Column="2" Command="{Binding ButtonCommand}" CommandParameter="." />
-                <Button Grid.Row="3" Grid.Column="3" Command="{Binding ButtonCommand}" CommandParameter="R/S" />
-                <Button Grid.Row="3" Grid.Column="4" Command="{Binding ButtonCommand}" CommandParameter="+" />
+                <Button Grid.Row="3" Grid.Column="0" CommandParameter="{Binding Buttons.Clear}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="3" Grid.Column="1" CommandParameter="{Binding Buttons.Zero}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="3" Grid.Column="2" CommandParameter="{Binding Buttons.Dot}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="3" Grid.Column="3" CommandParameter="{Binding Buttons.Solve}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="3" Grid.Column="4" CommandParameter="{Binding Buttons.Add}" Command="{Binding ButtonCommand}" />
             </Grid>
         </Grid>
     </ContentPage.Content>

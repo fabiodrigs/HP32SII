@@ -17,7 +17,6 @@ namespace HP32SII.Logic
         private Dictionary<string, Func<KeyboardState>> defaultKeyboard;
         private Dictionary<string, Func<KeyboardState>> leftKeyboard;
         private Dictionary<string, Func<KeyboardState>> rightKeyboard;
-        private Dictionary<string, string> alphabeticKeyboard;
         private Calculator calculator = new Calculator();
         private Output output = new Output();
         private bool pushAtNextAppend = false;
@@ -26,6 +25,8 @@ namespace HP32SII.Logic
         public ICommand ButtonCommand { get; private set; }
 
         #region Properties
+        public Buttons Buttons { get; } = new Buttons();
+
         private string topStatus = "";
         public string TopStatus
         {
@@ -71,7 +72,7 @@ namespace HP32SII.Logic
 
         public MainPageViewModel()
         {
-            ButtonCommand = new Command<string>(HandleButton);
+            ButtonCommand = new Command<Button>(HandleButton);
             timer.initTimer(InactivityIntervalInMs, TimerElapsed, false);
             timer.startTimer();
 
@@ -216,54 +217,6 @@ namespace HP32SII.Logic
                 { "R/S", DoNothing },
                 { "+", DoNothing },
             };
-
-            alphabeticKeyboard = new Dictionary<string, string>
-            {
-                // First row
-                { "SQRT", "A" },
-                { "EXP", "B" },
-                { "LN", "C" },
-                { "POW", "D" },
-                { "1/X", "E" },
-                { "SUM", "F" },
-                // Second row
-                { "STO", "G" },
-                { "RCL", "H" },
-                { "R", "I" },
-                { "SIN", "J" },
-                { "COS", "K" },
-                { "TAN", "L" },
-                // Third row
-                { "ENTER", "M" },
-                { "SWAP", "N" },
-                { "+/-", "O" },
-                { "E", "P" },
-                { "BACK", null },
-                // Fourth row
-                { "XEQ", null },
-                { "7", "Q" },
-                { "8", "R" },
-                { "9", "S" },
-                { "/", null },
-                // Fifth row
-                { "LEFT", null },
-                { "4", "T" },
-                { "5", "U" },
-                { "6", "V" },
-                { "*", null },
-                // Sixth row
-                { "RIGHT", null },
-                { "1", "W" },
-                { "2", "X" },
-                { "3", "Y" },
-                { "-", null },
-                // Seventh row
-                { "C", null },
-                { "0", "Z" },
-                { ".", "i" },
-                { "R/S", null },
-                { "+", null },
-            };
         }
 
         private void TimerElapsed(object sender, EventArgs e)
@@ -282,14 +235,14 @@ namespace HP32SII.Logic
 
         }
 
-        private void HandleButton(string button)
+        private void HandleButton(Button button)
         {
-            if (keyboardState == KeyboardState.Off && button != "C")
+            if (keyboardState == KeyboardState.Off && button != Buttons.Clear)
                 return;
 
             RestartInactivityTimer();
 
-            if (button == "LEFT")
+            if (button == Buttons.Left)
             {
                 if (escapeMode == EscapeMode.Left)
                 {
@@ -301,7 +254,7 @@ namespace HP32SII.Logic
                 }
                 return;
             }
-            else if (button == "RIGHT")
+            else if (button == Buttons.Right)
             {
                 if (escapeMode == EscapeMode.Right)
                 {
@@ -317,7 +270,7 @@ namespace HP32SII.Logic
             switch (keyboardState)
             {
                 case KeyboardState.Off:
-                    if (button == "C")
+                    if (button == Buttons.Clear)
                     {
                         pushAtNextAppend = false;
                         TurnScreenOn();
@@ -327,47 +280,67 @@ namespace HP32SII.Logic
                 case KeyboardState.Default:
                     if (escapeMode == EscapeMode.None)
                     {
-                        keyboardState = defaultKeyboard[button]();
+                        keyboardState = defaultKeyboard[button.Name]();
                     }
                     else if (escapeMode == EscapeMode.Left)
                     {
-                        keyboardState = leftKeyboard[button]();
+                        keyboardState = leftKeyboard[button.Name]();
                     }
                     else
                     {
-                        keyboardState = rightKeyboard[button]();
+                        keyboardState = rightKeyboard[button.Name]();
                     }
                     break;
                 case KeyboardState.Store:
-                    if (alphabeticKeyboard[button] != null)
+                    if (button.Letter != null)
                     {
                         BottomStatus = "";
-                        Display = $"STO  {alphabeticKeyboard[button]}";
-                        calculator.Store(alphabeticKeyboard[button], output.ToDouble());
+                        Display = $"STO  {button.Letter}";
+                        calculator.Store(button.Letter, output.ToDouble());
                         timer.stopTimer();
                         timer.setInterval(DisplayLetterIntervalInMs);
                         timer.startTimer();
                         keyboardState = KeyboardState.WaitForDefault;
                     }
-                    else if (button == "C" || button == "BACK")
+                    else if (button == Buttons.Solve)
+                    {
+                        // TODO display "INVALID (i)"
+                    }
+                    else if (button == Buttons.Divide)
+                    {
+                        Display = $"STO /  _";
+                    }
+                    else if (button == Buttons.Multiply)
+                    {
+                        Display = $"STO *  _";
+                    }
+                    else if (button == Buttons.Subtract)
+                    {
+                        Display = $"STO -  _";
+                    }
+                    else if (button == Buttons.Add)
+                    {
+                        Display = $"STO +  _";
+                    }
+                    else if (button == Buttons.Clear || button == Buttons.Back)
                     {
                         Display = output.ToString();
                         keyboardState = GoToDefault();
                     }
                     break;
                 case KeyboardState.Recall:
-                    if (alphabeticKeyboard[button] != null)
+                    if (button.Letter != null)
                     {
                         BottomStatus = "";
-                        Display = $"RCL  {alphabeticKeyboard[button]}";
-                        var recalled = calculator.Recall(alphabeticKeyboard[button]);
+                        Display = $"RCL  {button.Letter}";
+                        var recalled = calculator.Recall(button.Letter);
                         output.FromDouble(recalled);
                         timer.stopTimer();
                         timer.setInterval(DisplayLetterIntervalInMs);
                         timer.startTimer();
                         keyboardState = KeyboardState.WaitForDefault;
                     }
-                    else if (button == "C" || button == "BACK")
+                    else if (button == Buttons.Clear || button == Buttons.Back)
                     {
                         Display = output.ToString();
                         keyboardState = GoToDefault();
