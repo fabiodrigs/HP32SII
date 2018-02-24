@@ -42,7 +42,7 @@
                 </Grid.ColumnDefinitions>
                 <Label Grid.Row="0" Grid.Column="1" Text="{Binding TopStatus}" IsVisible="{Binding IsTopStatusVisible}" FontSize="Micro" FontAttributes="Bold"  />
                 <Label Grid.Row="1" Grid.Column="1" Text="{Binding Display}" IsVisible="{Binding IsDisplayVisible}" FontSize="Large" FontAttributes="Bold, Italic" />
-                <Label Grid.Row="2" Grid.Column="1" Text="{Binding BottomStatus}" IsVisible="{Binding IsBottomVisible}" FontSize="Micro" FontAttributes="Bold" />
+                <Label Grid.Row="2" Grid.Column="1" Text="{Binding BottomStatus}" IsVisible="{Binding IsBottomStatusVisible}" FontSize="Micro" FontAttributes="Bold" />
             </Grid>
             <!--Top keyboard-->
             <Grid Grid.Row="3" Grid.Column="1">
@@ -102,13 +102,13 @@
                 <Button Grid.Row="0" Grid.Column="3" CommandParameter="{Binding Buttons.Nine}" Command="{Binding ButtonCommand}" />
                 <Button Grid.Row="0" Grid.Column="4" CommandParameter="{Binding Buttons.Divide}" Command="{Binding ButtonCommand}" />
                 <!--Fifth row-->
-                <Button Grid.Row="1" Grid.Column="0" CommandParameter="{Binding Buttons.Left}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="1" Grid.Column="0" Command="{Binding LeftArrowCommand}" />
                 <Button Grid.Row="1" Grid.Column="1" CommandParameter="{Binding Buttons.Four}" Command="{Binding ButtonCommand}" />
                 <Button Grid.Row="1" Grid.Column="2" CommandParameter="{Binding Buttons.Five}" Command="{Binding ButtonCommand}" />
                 <Button Grid.Row="1" Grid.Column="3" CommandParameter="{Binding Buttons.Six}" Command="{Binding ButtonCommand}" />
                 <Button Grid.Row="1" Grid.Column="4" CommandParameter="{Binding Buttons.Multiply}" Command="{Binding ButtonCommand}" />
                 <!--Sixth row-->
-                <Button Grid.Row="2" Grid.Column="0" CommandParameter="{Binding Buttons.Right}" Command="{Binding ButtonCommand}" />
+                <Button Grid.Row="2" Grid.Column="0" Command="{Binding RightArrowCommand}" />
                 <Button Grid.Row="2" Grid.Column="1" CommandParameter="{Binding Buttons.One}" Command="{Binding ButtonCommand}" />
                 <Button Grid.Row="2" Grid.Column="2" CommandParameter="{Binding Buttons.Two}" Command="{Binding ButtonCommand}" />
                 <Button Grid.Row="2" Grid.Column="3" CommandParameter="{Binding Buttons.Three}" Command="{Binding ButtonCommand}" />

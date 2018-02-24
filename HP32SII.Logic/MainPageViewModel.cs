@@ -19,6 +19,8 @@ namespace HP32SII.Logic
         private bool pushAtNextAppend = false;
         private IAdvancedTimer timer = DependencyService.Get<IAdvancedTimer>();
 
+        public ICommand LeftArrowCommand { get; private set; }
+        public ICommand RightArrowCommand { get; private set; }
         public ICommand ButtonCommand { get; private set; }
 
         #region Properties
@@ -69,7 +71,10 @@ namespace HP32SII.Logic
         #region Constructor
         public MainPageViewModel()
         {
-            ButtonCommand = new Command<Button>(HandleButton);
+            LeftArrowCommand = new Command(HandleLeftArrow, IsStateOn);
+            RightArrowCommand = new Command(HandleRightArrow, IsStateOn);
+            ButtonCommand = new Command<Button>(HandleButton, IsButtonEnabled);
+
             timer.initTimer(InactivityIntervalInMs, TimerElapsed, false);
             timer.startTimer();
 
@@ -234,37 +239,21 @@ namespace HP32SII.Logic
             }
         }
 
+        private void HandleLeftArrow()
+        {
+            RestartInactivityTimer();
+            escapeMode = escapeMode == EscapeMode.Left ? ClearEscapeMode() : GoToLeft();
+        }
+
+        private void HandleRightArrow()
+        {
+            RestartInactivityTimer();
+            escapeMode = escapeMode == EscapeMode.Right ? ClearEscapeMode() : GoToRight();
+        }
+
         private void HandleButton(Button button)
         {
-            if (keyboardState == KeyboardState.Off && button != Buttons.Clear)
-                return;
-
             RestartInactivityTimer();
-
-            if (button == Buttons.Left)
-            {
-                if (escapeMode == EscapeMode.Left)
-                {
-                    escapeMode = ClearEscapeMode();
-                }
-                else
-                {
-                    escapeMode = GoToLeft();
-                }
-                return;
-            }
-            else if (button == Buttons.Right)
-            {
-                if (escapeMode == EscapeMode.Right)
-                {
-                    escapeMode = ClearEscapeMode();
-                }
-                else
-                {
-                    escapeMode = GoToRight();
-                }
-                return;
-            }
 
             switch (keyboardState)
             {
@@ -273,6 +262,7 @@ namespace HP32SII.Logic
                     {
                         pushAtNextAppend = false;
                         TurnScreenOn();
+                        timer.startTimer();
                         keyboardState = GoToDefault();
                     }
                     break;
@@ -437,6 +427,7 @@ namespace HP32SII.Logic
 
         private KeyboardState TurnOff()
         {
+            timer.stopTimer();
             TurnScreenOff();
             return KeyboardState.Off;
         }
@@ -511,6 +502,23 @@ namespace HP32SII.Logic
         {
             timer.stopTimer();
             timer.startTimer();
+        }
+
+        private bool IsButtonEnabled(Button button)
+        {
+            if (button == Buttons.Clear)
+                return true;
+            else
+                return IsStateOn();
+        }
+
+        private bool IsStateOn()
+        {
+            if (keyboardState != KeyboardState.Off)
+                return true;
+            else
+                return false;
+            //return keyboardState != KeyboardState.Off;
         }
     }
 }
