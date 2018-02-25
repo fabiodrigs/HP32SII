@@ -1,7 +1,6 @@
 ﻿using AdvancedTimer.Forms.Plugin.Abstractions;
 using GalaSoft.MvvmLight;
 using System;
-using System.Collections.Generic;
 using System.Windows.Input;
 using Xamarin.Forms;
 
@@ -13,11 +12,8 @@ namespace HP32SII.Logic
         private const int InactivityIntervalInMs = 10 * 60 * 1000;
 
         private EscapeMode escapeMode = EscapeMode.None;
-        private KeyboardState keyboardState = KeyboardState.Default;
-        private Calculator calculator = new Calculator();
-        private Output output = new Output();
-        private bool pushAtNextAppend = false;
         private IAdvancedTimer timer = DependencyService.Get<IAdvancedTimer>();
+        private State state;
 
         public ICommand LeftArrowCommand { get; private set; }
         public ICommand RightArrowCommand { get; private set; }
@@ -78,166 +74,13 @@ namespace HP32SII.Logic
             timer.initTimer(InactivityIntervalInMs, TimerElapsed, false);
             timer.startTimer();
 
-            Func<Func<double, double>, KeyboardState> monadic = MonadicOperation;
-            Func<Func<double, double>, KeyboardState> dyadic = DyadicOperation;
-            Func<string, KeyboardState> numeric = NumericKey;
+            State.Timer = timer;
+            State.Buttons = Buttons;
+            DefaultState.AssignButtonOperations();
 
-            Buttons.Sqrt.DefaultOperation = monadic.Compose(calculator.SquareRoot);
-            Buttons.Sqrt.LeftOperation = monadic.Compose(calculator.Square);
-            Buttons.Sqrt.RightOperation = DoNothing;
-
-            Buttons.Exp.DefaultOperation = monadic.Compose(calculator.Exponential);
-            Buttons.Exp.LeftOperation = monadic.Compose(calculator.PowerOfTen);
-            Buttons.Exp.RightOperation = monadic.Compose(calculator.PowerOfTen);
-
-            Buttons.Ln.DefaultOperation = monadic.Compose(calculator.NaturalLogarithm);
-            Buttons.Ln.LeftOperation = monadic.Compose(calculator.LogBase10);
-            Buttons.Ln.RightOperation = monadic.Compose(calculator.LogBase10);
-
-            Buttons.Pow.DefaultOperation = dyadic.Compose(calculator.Power);
-            Buttons.Pow.LeftOperation = DoNothing;
-            Buttons.Pow.RightOperation = DoNothing;
-
-            Buttons.Invert.DefaultOperation = monadic.Compose(calculator.Invert);
-            Buttons.Invert.LeftOperation = DoNothing;
-            Buttons.Invert.RightOperation = monadic.Compose(calculator.Factorial);
-
-            Buttons.Sum.DefaultOperation = DoNothing;
-            Buttons.Sum.LeftOperation = DoNothing;
-            Buttons.Sum.RightOperation = DoNothing;
-
-            Buttons.Store.DefaultOperation = Store;
-            Buttons.Store.LeftOperation = DoNothing;
-            Buttons.Store.RightOperation = DoNothing;
-
-            Buttons.Recall.DefaultOperation = Recall;
-            Buttons.Recall.LeftOperation = DoNothing;
-            Buttons.Recall.RightOperation = DoNothing;
-
-            Buttons.RollDown.DefaultOperation = DoNothing;
-            Buttons.RollDown.LeftOperation = DoNothing;
-            Buttons.RollDown.RightOperation = DoNothing;
-
-            Buttons.Sin.LeftOperation = DoNothing;
-            Buttons.Sin.RightOperation = DoNothing;
-            Buttons.Sin.DefaultOperation = DoNothing;
-
-            Buttons.Cos.LeftOperation = DoNothing;
-            Buttons.Cos.RightOperation = DoNothing;
-            Buttons.Cos.DefaultOperation = DoNothing;
-
-            Buttons.Tan.DefaultOperation = DoNothing;
-            Buttons.Tan.LeftOperation = DoNothing;
-            Buttons.Tan.RightOperation = DoNothing;
-
-            Buttons.Enter.DefaultOperation = Enter;
-            Buttons.Enter.LeftOperation = DoNothing;
-            Buttons.Enter.RightOperation = DoNothing;
-
-            Buttons.Swap.DefaultOperation = dyadic.Compose(calculator.Swap);
-            Buttons.Swap.LeftOperation = DoNothing;
-            Buttons.Swap.RightOperation = DoNothing;
-
-            Buttons.ChangeSign.DefaultOperation = ChangeSign;
-            Buttons.ChangeSign.LeftOperation = DoNothing;
-            Buttons.ChangeSign.RightOperation = DoNothing;
-
-            Buttons.E.LeftOperation = DoNothing;
-            Buttons.E.DefaultOperation = DoNothing;
-            Buttons.E.RightOperation = DoNothing;
-
-            Buttons.Back.DefaultOperation = Backspace;
-            Buttons.Back.LeftOperation = DoNothing;
-            Buttons.Back.RightOperation = DoNothing;
-
-            Buttons.Xeq.DefaultOperation = DoNothing;
-            Buttons.Xeq.LeftOperation = DoNothing;
-            Buttons.Xeq.RightOperation = DoNothing;
-
-            Buttons.Seven.DefaultOperation = numeric.Compose(Buttons.Seven.Name);
-            Buttons.Seven.LeftOperation = DoNothing;
-            Buttons.Seven.RightOperation = DoNothing;
-
-            Buttons.Eight.DefaultOperation = numeric.Compose(Buttons.Eight.Name);
-            Buttons.Eight.LeftOperation = DoNothing;
-            Buttons.Eight.RightOperation = DoNothing;
-
-            Buttons.Nine.DefaultOperation = numeric.Compose(Buttons.Nine.Name);
-            Buttons.Nine.LeftOperation = DoNothing;
-            Buttons.Nine.RightOperation = DoNothing;
-
-            Buttons.Divide.DefaultOperation = dyadic.Compose(calculator.Divide);
-            Buttons.Divide.LeftOperation = DoNothing;
-            Buttons.Divide.RightOperation = DoNothing;
-
-            Buttons.Four.DefaultOperation = numeric.Compose(Buttons.Four.Name);
-            Buttons.Four.LeftOperation = DoNothing;
-            Buttons.Four.RightOperation = DoNothing;
-
-            Buttons.Five.DefaultOperation = numeric.Compose(Buttons.Five.Name);
-            Buttons.Five.LeftOperation = DoNothing;
-            Buttons.Five.RightOperation = DoNothing;
-
-            Buttons.Six.DefaultOperation = numeric.Compose(Buttons.Six.Name);
-            Buttons.Six.LeftOperation = monadic.Compose(calculator.ToRadian);
-            Buttons.Six.RightOperation = monadic.Compose(calculator.ToRadian);
-
-            Buttons.Multiply.DefaultOperation = dyadic.Compose(calculator.Multiply);
-            Buttons.Multiply.LeftOperation = DoNothing;
-            Buttons.Multiply.RightOperation = DoNothing;
-
-            Buttons.One.DefaultOperation = numeric.Compose(Buttons.One.Name);
-            Buttons.One.LeftOperation = monadic.Compose(calculator.ToPound);
-            Buttons.One.RightOperation = monadic.Compose(calculator.ToPound);
-
-            Buttons.Two.DefaultOperation = numeric.Compose(Buttons.Two.Name);
-            Buttons.Two.LeftOperation = monadic.Compose(calculator.ToFahrenheit);
-            Buttons.Two.RightOperation = monadic.Compose(calculator.ToFahrenheit);
-
-            Buttons.Three.DefaultOperation = numeric.Compose(Buttons.Three.Name);
-            Buttons.Three.LeftOperation = monadic.Compose(calculator.ToInch);
-            Buttons.Three.RightOperation = monadic.Compose(calculator.ToInch);
-
-            Buttons.Subtract.DefaultOperation = dyadic.Compose(calculator.Subtract);
-            Buttons.Subtract.LeftOperation = DoNothing;
-            Buttons.Subtract.RightOperation = DoNothing;
-
-            Buttons.Clear.DefaultOperation = Clear;
-            Buttons.Clear.LeftOperation = TurnOff;
-            Buttons.Clear.RightOperation = TurnOff;
-
-            Buttons.Zero.DefaultOperation = numeric.Compose(Buttons.Zero.Name);
-            Buttons.Zero.LeftOperation = DoNothing;
-            Buttons.Zero.RightOperation = DoNothing;
-
-            Buttons.Dot.DefaultOperation = HandleDot;
-            Buttons.Dot.LeftOperation = DoNothing;
-            Buttons.Dot.RightOperation = DoNothing;
-
-            Buttons.Solve.DefaultOperation = DoNothing;
-            Buttons.Solve.LeftOperation = DoNothing;
-            Buttons.Solve.RightOperation = DoNothing;
-
-            Buttons.Add.DefaultOperation = dyadic.Compose(calculator.Add);
-            Buttons.Add.LeftOperation = DoNothing;
-            Buttons.Add.RightOperation = DoNothing;
+            state = new DefaultState();
         }
         #endregion
-
-        private void TimerElapsed(object sender, EventArgs e)
-        {
-            if (keyboardState == KeyboardState.WaitForDefault)
-            {
-                Display = output.ToString();
-                timer.setInterval(InactivityIntervalInMs);
-                timer.startTimer();
-                keyboardState = GoToDefault();
-            }
-            else
-            {
-                keyboardState = TurnOff();
-            }
-        }
 
         private void HandleLeftArrow()
         {
@@ -255,107 +98,21 @@ namespace HP32SII.Logic
         {
             RestartInactivityTimer();
 
-            switch (keyboardState)
-            {
-                case KeyboardState.Off:
-                    if (button == Buttons.Clear)
-                    {
-                        pushAtNextAppend = false;
-                        TurnScreenOn();
-                        timer.startTimer();
-                        keyboardState = GoToDefault();
-                    }
-                    break;
-                case KeyboardState.Default:
-                    if (escapeMode == EscapeMode.None)
-                    {
-                        keyboardState = button.DefaultOperation();
-                    }
-                    else if (escapeMode == EscapeMode.Left)
-                    {
-                        keyboardState = button.LeftOperation();
-                    }
-                    else
-                    {
-                        keyboardState = button.RightOperation();
-                    }
-                    break;
-                case KeyboardState.Store:
-                    if (button.Letter != null)
-                    {
-                        BottomStatus = "";
-                        Display = $"STO  {button.Letter}";
-                        calculator.Store(button.Letter, output.ToDouble());
-                        timer.stopTimer();
-                        timer.setInterval(DisplayLetterIntervalInMs);
-                        timer.startTimer();
-                        keyboardState = KeyboardState.WaitForDefault;
-                    }
-                    else if (button == Buttons.Solve)
-                    {
-                        // TODO display "INVALID (i)"
-                    }
-                    else if (button == Buttons.Divide)
-                    {
-                        Display = $"STO /  _";
-                    }
-                    else if (button == Buttons.Multiply)
-                    {
-                        Display = $"STO *  _";
-                    }
-                    else if (button == Buttons.Subtract)
-                    {
-                        Display = $"STO -  _";
-                    }
-                    else if (button == Buttons.Add)
-                    {
-                        Display = $"STO +  _";
-                    }
-                    else if (button == Buttons.Clear || button == Buttons.Back)
-                    {
-                        Display = output.ToString();
-                        keyboardState = GoToDefault();
-                    }
-                    break;
-                case KeyboardState.Recall:
-                    if (button.Letter != null)
-                    {
-                        BottomStatus = "";
-                        Display = $"RCL  {button.Letter}";
-                        var recalled = calculator.Recall(button.Letter);
-                        output.FromDouble(recalled);
-                        timer.stopTimer();
-                        timer.setInterval(DisplayLetterIntervalInMs);
-                        timer.startTimer();
-                        keyboardState = KeyboardState.WaitForDefault;
-                    }
-                    else if (button == Buttons.Clear || button == Buttons.Back)
-                    {
-                        Display = output.ToString();
-                        keyboardState = GoToDefault();
-                    }
-                    break;
-                case KeyboardState.WaitForDefault:
-                    break;
-                default:
-                    break;
-            }
+            state = state.HandleButton(button, escapeMode);
+
+            Display = State.Display;
+            TopStatus = State.TopStatus;
+            BottomStatus = State.BottomStatus;
+            IsDisplayVisible = State.IsDisplayVisible;
+            IsTopStatusVisible = State.IsTopStatusVisible;
+            IsBottomStatusVisible = State.IsBottomStatusVisible;
 
             escapeMode = ClearEscapeMode();
         }
 
-        private KeyboardState DoNothing()
+        private void TimerElapsed(object sender, EventArgs e)
         {
-            return keyboardState;
-        }
-
-        private KeyboardState Enter()
-        {
-            pushAtNextAppend = false;
-            output.Freeze();
-            calculator.Push(output.ToDouble());
-            Display = output.ToString();
-            return GoToDefault();
+            state = state.TimerElapsed();
         }
 
         private EscapeMode GoToLeft()
@@ -382,122 +139,6 @@ namespace HP32SII.Logic
             return EscapeMode.Right;
         }
 
-        private KeyboardState ChangeSign()
-        {
-            output.ChangeSign();
-            Display = output.ToString();
-            if (!output.IsEditable)
-            {
-                pushAtNextAppend = true;
-            }
-            return GoToDefault();
-        }
-
-        private KeyboardState NumericKey(string button)
-        {
-            if (pushAtNextAppend)
-            {
-                calculator.Push(output.ToDouble());
-                pushAtNextAppend = false;
-            }
-            output.AppendDigit(button);
-            Display = output.ToString();
-            return GoToDefault();
-        }
-
-        private KeyboardState HandleDot()
-        {
-            if (pushAtNextAppend)
-            {
-                calculator.Push(output.ToDouble());
-                pushAtNextAppend = false;
-            }
-            output.AppendDot();
-            Display = output.ToString();
-            return GoToDefault();
-        }
-
-        private KeyboardState Clear()
-        {
-            pushAtNextAppend = false;
-            output.Clear();
-            Display = output.ToString();
-            return GoToDefault();
-        }
-
-        private KeyboardState TurnOff()
-        {
-            timer.stopTimer();
-            TurnScreenOff();
-            return KeyboardState.Off;
-        }
-
-        private KeyboardState Backspace()
-        {
-            pushAtNextAppend = false;
-            output.Backspace();
-            Display = output.ToString();
-            return GoToDefault();
-        }
-
-        private KeyboardState MonadicOperation(Func<double, double> operation)
-        {
-            pushAtNextAppend = true;
-            var result = operation(output.ToDouble());
-            output.FromDouble(result);
-            Display = output.ToString();
-            return GoToDefault();
-        }
-
-        private KeyboardState DyadicOperation(Func<double, double> operation)
-        {
-            pushAtNextAppend = false;
-            var result = operation(output.ToDouble());
-            output.FromDouble(result);
-            Display = output.ToString();
-            return GoToDefault();
-        }
-
-        private KeyboardState Store()
-        {
-            if (output.IsEditable)
-            {
-                output.Freeze();
-                pushAtNextAppend = true;
-            }
-
-            Display = "STO  _";
-            BottomStatus = "A..Z";
-            return KeyboardState.Store;
-        }
-
-        private KeyboardState Recall()
-        {
-            if (output.IsEditable)
-            {
-                output.Freeze();
-            }
-            calculator.Push(output.ToDouble());
-
-            Display = "RCL  _";
-            BottomStatus = "A..Z";
-            return KeyboardState.Recall;
-        }
-
-        private void TurnScreenOff()
-        {
-            IsDisplayVisible = false;
-            IsTopStatusVisible = false;
-            IsBottomStatusVisible = false;
-        }
-
-        private void TurnScreenOn()
-        {
-            IsDisplayVisible = true;
-            IsTopStatusVisible = true;
-            IsBottomStatusVisible = true;
-        }
-
         private void RestartInactivityTimer()
         {
             timer.stopTimer();
@@ -514,11 +155,7 @@ namespace HP32SII.Logic
 
         private bool IsStateOn()
         {
-            if (keyboardState != KeyboardState.Off)
-                return true;
-            else
-                return false;
-            //return keyboardState != KeyboardState.Off;
+            return !(state is OffState);
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 namespace HP32SII.Logic
 {
-    internal class Output
+    public class Output
     {
         private const string PositivePrefix = " ";
         private const string NegativePrefix = "-";

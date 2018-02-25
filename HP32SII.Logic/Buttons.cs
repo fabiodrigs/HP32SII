@@ -6,11 +6,11 @@ namespace HP32SII.Logic
     {
         // First row
         public Button Sqrt { get; } = new Button("SQRT", "A");
-        public Button Exp { get; } = new Button("EXP", "B");
-        public Button Ln { get; } = new Button("LN", "C");
-        public Button Pow { get; } = new Button( "POW", "D" );
-        public Button Invert { get; } = new Button( "1/X", "E" );
-        public Button Sum { get; } = new Button( "SUM", "F" );
+        public  Button Exp { get; } = new Button("EXP", "B");
+        public  Button Ln { get; } = new Button("LN", "C");
+        public  Button Pow { get; } = new Button( "POW", "D" );
+        public  Button Invert { get; } = new Button( "1/X", "E" );
+        public  Button Sum { get; } = new Button( "SUM", "F" );
         // Second row
         public Button Store { get; } = new Button( "STO", "G" );
         public Button Recall { get; } = new Button( "RCL", "H" );
