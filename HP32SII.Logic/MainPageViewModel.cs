@@ -7,8 +7,9 @@ namespace HP32SII.Logic
 {
     public class MainPageViewModel : ViewModelBase
     {
-        private EscapeMode escapeMode = EscapeMode.None;
         private Timer timer;
+
+        private EscapeMode escapeMode;
         private State state;
 
         public ICommand LeftArrowCommand { get; private set; }
@@ -73,6 +74,7 @@ namespace HP32SII.Logic
             State.Buttons = Buttons;
             DefaultState.AssignButtonOperations();
 
+            escapeMode = new NoEscapeMode();
             state = new DefaultState();
         }
         #endregion
@@ -83,7 +85,8 @@ namespace HP32SII.Logic
             {
                 timer.StartWithInactivityInterval();
             }
-            escapeMode = escapeMode == EscapeMode.Left ? ClearEscapeMode() : GoToLeft();
+            escapeMode = escapeMode.HandleLeftArrow();
+            TopStatus = EscapeMode.TopStatus;
         }
 
         private void HandleRightArrow()
@@ -92,7 +95,8 @@ namespace HP32SII.Logic
             {
                 timer.StartWithInactivityInterval();
             }
-            escapeMode = escapeMode == EscapeMode.Right ? ClearEscapeMode() : GoToRight();
+            escapeMode = escapeMode.HandleRightArrow();
+            TopStatus = EscapeMode.TopStatus;
         }
 
         private void HandleButton(Button button)
@@ -103,10 +107,10 @@ namespace HP32SII.Logic
             }
 
             state = state.HandleButton(button, escapeMode);
+            escapeMode = new NoEscapeMode();
 
             UpdateDisplay();
 
-            escapeMode = ClearEscapeMode();
         }
 
         private void TimerElapsed()
@@ -117,36 +121,12 @@ namespace HP32SII.Logic
 
         private void UpdateDisplay()
         {
+            TopStatus = EscapeMode.TopStatus;
             Display = State.Display;
-            TopStatus = State.TopStatus;
             BottomStatus = State.BottomStatus;
             IsDisplayVisible = State.IsDisplayVisible;
             IsTopStatusVisible = State.IsTopStatusVisible;
             IsBottomStatusVisible = State.IsBottomStatusVisible;
-        }
-
-        private EscapeMode GoToLeft()
-        {
-            TopStatus = "  <=";
-            return EscapeMode.Left;
-        }
-
-        private EscapeMode ClearEscapeMode()
-        {
-            return EscapeMode.None;
-        }
-
-        private KeyboardState GoToDefault()
-        {
-            TopStatus = "";
-            BottomStatus = "";
-            return KeyboardState.Default;
-        }
-
-        private EscapeMode GoToRight()
-        {
-            TopStatus = "        =>";
-            return EscapeMode.Right;
         }
 
         private bool IsButtonEnabled(Button button)

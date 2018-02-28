@@ -10,7 +10,6 @@ namespace HP32SII.Logic
         protected static bool pushAtNextAppend = false;
 
         public static string Display { get; protected set; } = "";
-        public static string TopStatus { get; protected set; } = "";
         public static string BottomStatus { get; protected set; } = "";
 
         public static bool IsDisplayVisible { get; protected set; } = true;

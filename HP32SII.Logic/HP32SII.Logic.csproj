@@ -38,7 +38,10 @@
     <Compile Include="Button.cs" />
     <Compile Include="Calculator.cs" />
     <Compile Include="ConversionUnit.cs" />
-    <Compile Include="EscapeMode.cs" />
+    <Compile Include="EscapesModes\EscapeMode.cs" />
+    <Compile Include="EscapesModes\LeftEscapeMode.cs" />
+    <Compile Include="EscapesModes\NoEscapeMode.cs" />
+    <Compile Include="EscapesModes\RightEscapeMode.cs" />
     <Compile Include="Extensions\FuncExtensions.cs" />
     <Compile Include="FunctionalUnit.cs" />
     <Compile Include="Buttons.cs" />

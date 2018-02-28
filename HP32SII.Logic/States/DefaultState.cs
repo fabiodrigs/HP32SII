@@ -6,7 +6,6 @@ namespace HP32SII.Logic
     {
         public DefaultState() : base()
         {
-            TopStatus = "";
             BottomStatus = "";
         }
 
@@ -275,17 +274,16 @@ namespace HP32SII.Logic
 
         public override State HandleButton(Button button, EscapeMode escapeMode)
         {
-            if (escapeMode == EscapeMode.None)
+            switch (escapeMode)
             {
-                return button.DefaultOperation();
-            }
-            else if (escapeMode == EscapeMode.Left)
-            {
-                return button.LeftOperation();
-            }
-            else
-            {
-                return button.RightOperation();
+                case NoEscapeMode mode:
+                    return button.DefaultOperation();
+                case LeftEscapeMode mode:
+                    return button.LeftOperation();
+                case RightEscapeMode mode:
+                    return button.RightOperation();
+                default:
+                    throw new InvalidOperationException("Unexpected escape mode");
             }
         }
 
