@@ -15,7 +15,7 @@ namespace HP32SII.Logic
             {
                 pushAtNextAppend = false;
                 TurnScreenOn();
-                Timer.startTimer();
+                Timer.StartWithInactivityInterval();
                 return new DefaultState();
             }
             else

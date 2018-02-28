@@ -5,9 +5,6 @@ namespace HP32SII.Logic
 {
     public abstract class State
     {
-        protected const int DisplayLetterIntervalInMs = 200;
-        protected const int InactivityIntervalInMs = 10 * 60 * 1000;
-
         protected static Calculator calculator = new Calculator();
         protected static Output output = new Output();
         protected static bool pushAtNextAppend = false;
@@ -20,8 +17,8 @@ namespace HP32SII.Logic
         public static bool IsTopStatusVisible { get; protected set; } = true;
         public static bool IsBottomStatusVisible { get; protected set; } = true;
         
-        private static IAdvancedTimer timer = null;
-        public static IAdvancedTimer Timer
+        private static Timer timer = null;
+        public static Timer Timer
         {
             get => timer;
             set => timer = timer == null ? value : throw new InvalidOperationException("Timer has already been assigned");

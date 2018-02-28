@@ -1,5 +1,4 @@
-﻿using AdvancedTimer.Forms.Plugin.Abstractions;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using System;
 using System.Windows.Input;
 using Xamarin.Forms;
@@ -8,11 +7,8 @@ namespace HP32SII.Logic
 {
     public class MainPageViewModel : ViewModelBase
     {
-        private const int DisplayLetterIntervalInMs = 200;
-        private const int InactivityIntervalInMs = 10 * 60 * 1000;
-
         private EscapeMode escapeMode = EscapeMode.None;
-        private IAdvancedTimer timer = DependencyService.Get<IAdvancedTimer>();
+        private Timer timer;
         private State state;
 
         public ICommand LeftArrowCommand { get; private set; }
@@ -71,8 +67,7 @@ namespace HP32SII.Logic
             RightArrowCommand = new Command(HandleRightArrow, IsStateOn);
             ButtonCommand = new Command<Button>(HandleButton, IsButtonEnabled);
 
-            timer.initTimer(InactivityIntervalInMs, TimerElapsed, false);
-            timer.startTimer();
+            timer = new Timer(TimerElapsed);
 
             State.Timer = timer;
             State.Buttons = Buttons;
@@ -84,35 +79,50 @@ namespace HP32SII.Logic
 
         private void HandleLeftArrow()
         {
-            RestartInactivityTimer();
+            if (!(state is WaitForDefaultState))
+            {
+                timer.StartWithInactivityInterval();
+            }
             escapeMode = escapeMode == EscapeMode.Left ? ClearEscapeMode() : GoToLeft();
         }
 
         private void HandleRightArrow()
         {
-            RestartInactivityTimer();
+            if (!(state is WaitForDefaultState))
+            {
+                timer.StartWithInactivityInterval();
+            }
             escapeMode = escapeMode == EscapeMode.Right ? ClearEscapeMode() : GoToRight();
         }
 
         private void HandleButton(Button button)
         {
-            RestartInactivityTimer();
+            if (!(state is WaitForDefaultState))
+            {
+                timer.StartWithInactivityInterval();
+            }
 
             state = state.HandleButton(button, escapeMode);
 
+            UpdateDisplay();
+
+            escapeMode = ClearEscapeMode();
+        }
+
+        private void TimerElapsed()
+        {
+            state = state.TimerElapsed();
+            UpdateDisplay();
+        }
+
+        private void UpdateDisplay()
+        {
             Display = State.Display;
             TopStatus = State.TopStatus;
             BottomStatus = State.BottomStatus;
             IsDisplayVisible = State.IsDisplayVisible;
             IsTopStatusVisible = State.IsTopStatusVisible;
             IsBottomStatusVisible = State.IsBottomStatusVisible;
-
-            escapeMode = ClearEscapeMode();
-        }
-
-        private void TimerElapsed(object sender, EventArgs e)
-        {
-            state = state.TimerElapsed();
         }
 
         private EscapeMode GoToLeft()
@@ -137,12 +147,6 @@ namespace HP32SII.Logic
         {
             TopStatus = "        =>";
             return EscapeMode.Right;
-        }
-
-        private void RestartInactivityTimer()
-        {
-            timer.stopTimer();
-            timer.startTimer();
         }
 
         private bool IsButtonEnabled(Button button)

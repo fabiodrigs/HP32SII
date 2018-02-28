@@ -20,9 +20,7 @@ namespace HP32SII.Logic
                 BottomStatus = "";
                 Display = $"STO  {button.Letter}";
                 calculator.Store(button.Letter, output.ToDouble());
-                Timer.stopTimer();
-                Timer.setInterval(DisplayLetterIntervalInMs);
-                Timer.startTimer();
+                Timer.StartWithDisplayLetterInterval();
                 return new WaitForDefaultState();
             }
             else if (button == Buttons.Solve)

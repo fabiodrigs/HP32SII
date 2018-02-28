@@ -54,6 +54,7 @@
     <Compile Include="States\StoreState.cs" />
     <Compile Include="States\WaitForDefaultState.cs" />
     <Compile Include="StorageUnit.cs" />
+    <Compile Include="Timer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="AdvancedTimer.Forms.Plugin.Abstractions, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">

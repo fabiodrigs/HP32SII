@@ -15,14 +15,13 @@ namespace HP32SII.Logic
 
         public override State HandleButton(Button button, EscapeMode escapeMode)
         {
-            throw new NotImplementedException();
+            return this;
         }
 
         public override State TimerElapsed()
         {
             Display = output.ToString();
-            Timer.setInterval(InactivityIntervalInMs);
-            Timer.startTimer();
+            Timer.StartWithInactivityInterval();
             return new DefaultState();
         }
     }

@@ -216,7 +216,7 @@ namespace HP32SII.Logic
 
         private static State TurnOff()
         {
-            Timer.stopTimer();
+            Timer.Stop();
             TurnScreenOff();
             return new OffState();
         }

@@ -21,9 +21,7 @@ namespace HP32SII.Logic
                 Display = $"RCL  {button.Letter}";
                 var recalled = calculator.Recall(button.Letter);
                 output.FromDouble(recalled);
-                Timer.stopTimer();
-                Timer.setInterval(DisplayLetterIntervalInMs);
-                Timer.startTimer();
+                Timer.StartWithDisplayLetterInterval();
                 return new WaitForDefaultState();
             }
             else if (button == Buttons.Clear || button == Buttons.Back)
