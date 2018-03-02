@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using Xamarin.Forms;
 
 [assembly: InternalsVisibleTo("HP32SII.Logic.Test")]
 
@@ -10,8 +11,20 @@ namespace HP32SII.Logic
 
         private StackUnit stackUnit = new StackUnit();
         private FunctionalUnit functionalUnit = new FunctionalUnit();
-        private StorageUnit storageUnit = new StorageUnit();
+        private IDatabase storageUnit;
         private ConversionUnit conversionUnit = new ConversionUnit();
+
+        public Calculator()
+        {
+            try
+            {
+                storageUnit = DependencyService.Get<IDatabase>();
+            }
+            catch
+            {
+                storageUnit = new StorageUnit();
+            }
+        }
 
         #region Stack features
 

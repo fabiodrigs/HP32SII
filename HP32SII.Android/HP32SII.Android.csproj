@@ -135,6 +135,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Database.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -164,6 +165,10 @@
     <ProjectReference Include="..\HP32SII.Forms\HP32SII.Forms.csproj">
       <Project>{6f342257-11fc-44cc-924b-b588182f9d33}</Project>
       <Name>HP32SII.Forms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HP32SII.Logic\HP32SII.Logic.csproj">
+      <Project>{e672f6d9-f20b-4cc0-9829-cdb64dbe014a}</Project>
+      <Name>HP32SII.Logic</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

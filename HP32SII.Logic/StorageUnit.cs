@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
@@ -7,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace HP32SII.Logic
 {
-    internal sealed class StorageUnit
+    internal sealed class StorageUnit : IDatabase
     {
         private Dictionary<string, double> memory = new Dictionary<string, double>
         {
