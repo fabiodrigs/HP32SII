@@ -10,7 +10,7 @@ namespace HP32SII.Logic
     {
         public WaitForDefaultState() : base()
         {
-
+            Timer.StartWithDisplayLetterInterval();
         }
 
         public override State HandleButton(Button button, EscapeMode escapeMode)

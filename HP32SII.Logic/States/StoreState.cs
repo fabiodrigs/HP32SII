@@ -20,38 +20,33 @@ namespace HP32SII.Logic
                 BottomStatus = "";
                 Display = $"STO  {button.Letter}";
                 calculator.Store(button.Letter, output.ToDouble());
-                Timer.StartWithDisplayLetterInterval();
                 return new WaitForDefaultState();
-            }
-            else if (button == Buttons.Solve)
-            {
-                // TODO display "INVALID (i)"
-                return this;
             }
             else if (button == Buttons.Divide)
             {
-                Display = $"STO /  _";
-                return this;
+                return new StoreDivideState();
             }
             else if (button == Buttons.Multiply)
             {
-                Display = $"STO *  _";
-                return this;
+                return new StoreMultiplyState();
             }
             else if (button == Buttons.Subtract)
             {
-                Display = $"STO -  _";
-                return this;
+                return new StoreSubtractState();
             }
             else if (button == Buttons.Add)
             {
-                Display = $"STO +  _";
-                return this;
+                return new StoreAddState();
             }
             else if (button == Buttons.Clear || button == Buttons.Back)
             {
                 Display = output.ToString();
                 return new DefaultState();
+            }
+            else if (button == Buttons.Solve)
+            {
+                // TODO display "INVALID (i)"
+                return this;
             }
             else
             {

@@ -56,7 +56,11 @@
     <Compile Include="States\RecallState.cs" />
     <Compile Include="States\State.cs" />
     <Compile Include="States\OffState.cs" />
+    <Compile Include="States\StoreAddState.cs" />
+    <Compile Include="States\StoreDivideState.cs" />
+    <Compile Include="States\StoreMultiplyState.cs" />
     <Compile Include="States\StoreState.cs" />
+    <Compile Include="States\StoreSubtractState.cs" />
     <Compile Include="States\WaitForDefaultState.cs" />
     <Compile Include="StorageUnit.cs" />
     <Compile Include="Timer.cs" />

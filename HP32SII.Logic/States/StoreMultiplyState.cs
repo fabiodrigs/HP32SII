@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace HP32SII.Logic
 {
-    public sealed class RecallState : State
+    class StoreMultiplyState : State
     {
-        public RecallState() : base()
+        public StoreMultiplyState() : base()
         {
-
+            Display = $"STO *  _";
         }
 
         public override State HandleButton(Button button, EscapeMode escapeMode)
@@ -18,15 +18,20 @@ namespace HP32SII.Logic
             if (button.Letter != null)
             {
                 BottomStatus = "";
-                Display = $"RCL  {button.Letter}";
-                var recalled = calculator.Recall(button.Letter);
-                output.FromDouble(recalled);
+                Display = $"STO *  {button.Letter}";
+                var storedValue = calculator.Recall(button.Letter);
+                calculator.Store(button.Letter, storedValue * output.ToDouble());
                 return new WaitForDefaultState();
             }
             else if (button == Buttons.Clear || button == Buttons.Back)
             {
                 Display = output.ToString();
                 return new DefaultState();
+            }
+            else if (button == Buttons.Solve)
+            {
+                // TODO display "INVALID (i)"
+                return this;
             }
             else
             {
