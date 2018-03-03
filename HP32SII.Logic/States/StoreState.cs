@@ -10,7 +10,8 @@ namespace HP32SII.Logic
     {
         public StoreState() : base()
         {
-
+            Display = "STO  _";
+            BottomStatus = "A..Z";
         }
 
         public override State HandleButton(Button button, EscapeMode escapeMode)
@@ -45,8 +46,8 @@ namespace HP32SII.Logic
             }
             else if (button == Buttons.Solve)
             {
-                // TODO display "INVALID (i)"
-                return this;
+                Display = $"STO (i)";
+                return new WaitForInvalidI();
             }
             else
             {

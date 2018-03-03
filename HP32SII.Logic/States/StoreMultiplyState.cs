@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HP32SII.Logic
+﻿namespace HP32SII.Logic
 {
     class StoreMultiplyState : State
     {
@@ -23,15 +17,19 @@ namespace HP32SII.Logic
                 calculator.Store(button.Letter, storedValue * output.ToDouble());
                 return new WaitForDefaultState();
             }
-            else if (button == Buttons.Clear || button == Buttons.Back)
+            else if (button == Buttons.Clear)
             {
                 Display = output.ToString();
                 return new DefaultState();
             }
+            else if (button == Buttons.Back)
+            {
+                return new StoreState();
+            }
             else if (button == Buttons.Solve)
             {
-                // TODO display "INVALID (i)"
-                return this;
+                Display = $"STO * (i)";
+                return new WaitForInvalidI();
             }
             else
             {

@@ -254,8 +254,6 @@ namespace HP32SII.Logic
                 pushAtNextAppend = true;
             }
 
-            Display = "STO  _";
-            BottomStatus = "A..Z";
             return new StoreState();
         }
 
@@ -267,8 +265,6 @@ namespace HP32SII.Logic
             }
             calculator.Push(output.ToDouble());
 
-            Display = "RCL  _";
-            BottomStatus = "A..Z";
             return new RecallState();
         }
 
