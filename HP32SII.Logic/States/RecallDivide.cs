@@ -1,6 +1,6 @@
-﻿using System;
+﻿using HP32SII.Logic.EscapeModes;
 
-namespace HP32SII.Logic
+namespace HP32SII.Logic.States
 {
     class RecallDivide : State
     {
@@ -23,7 +23,7 @@ namespace HP32SII.Logic
                 else
                 {
                     output.FromDouble(output.ToDouble() / storedValue);
-                    return new WaitForDefaultState();
+                    return new WaitForDefault();
                 }
             }
             else if (button == Buttons.Clear)

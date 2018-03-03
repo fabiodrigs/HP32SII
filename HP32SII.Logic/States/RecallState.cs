@@ -1,4 +1,6 @@
-﻿namespace HP32SII.Logic
+﻿using HP32SII.Logic.EscapeModes;
+
+namespace HP32SII.Logic.States
 {
     public sealed class RecallState : State
     {
@@ -16,7 +18,7 @@
                 Display = $"RCL  {button.Letter}";
                 var storedValue = calculator.Recall(button.Letter);
                 output.FromDouble(storedValue);
-                return new WaitForDefaultState();
+                return new WaitForDefault();
             }
             else if (button == Buttons.Divide)
             {
@@ -28,11 +30,11 @@
             }
             else if (button == Buttons.Subtract)
             {
-                return new RecallSubtractState();
+                return new RecallSubtract();
             }
             else if (button == Buttons.Add)
             {
-                return new RecallAddState();
+                return new RecallAdd();
             }
             else if (button == Buttons.Clear || button == Buttons.Back)
             {

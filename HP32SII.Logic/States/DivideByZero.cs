@@ -1,4 +1,6 @@
-﻿namespace HP32SII.Logic
+﻿using HP32SII.Logic.EscapeModes;
+
+namespace HP32SII.Logic.States
 {
     class DivideByZero : State
     {

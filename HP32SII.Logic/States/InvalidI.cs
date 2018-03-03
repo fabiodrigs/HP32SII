@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using HP32SII.Logic.EscapeModes;
 
-namespace HP32SII.Logic
+namespace HP32SII.Logic.States
 {
     class InvalidI : State
     {

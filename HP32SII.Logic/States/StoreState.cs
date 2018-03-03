@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using HP32SII.Logic.EscapeModes;
 
-namespace HP32SII.Logic
+namespace HP32SII.Logic.States
 {
     public sealed class StoreState : State
     {
@@ -21,23 +17,23 @@ namespace HP32SII.Logic
                 BottomStatus = "";
                 Display = $"STO  {button.Letter}";
                 calculator.Store(button.Letter, output.ToDouble());
-                return new WaitForDefaultState();
+                return new WaitForDefault();
             }
             else if (button == Buttons.Divide)
             {
-                return new StoreDivideState();
+                return new StoreDivide();
             }
             else if (button == Buttons.Multiply)
             {
-                return new StoreMultiplyState();
+                return new StoreMultiply();
             }
             else if (button == Buttons.Subtract)
             {
-                return new StoreSubtractState();
+                return new StoreSubtract();
             }
             else if (button == Buttons.Add)
             {
-                return new StoreAddState();
+                return new StoreAdd();
             }
             else if (button == Buttons.Clear || button == Buttons.Back)
             {

@@ -1,7 +1,7 @@
-﻿using AdvancedTimer.Forms.Plugin.Abstractions;
+﻿using HP32SII.Logic.EscapeModes;
 using System;
 
-namespace HP32SII.Logic
+namespace HP32SII.Logic.States
 {
     public abstract class State
     {

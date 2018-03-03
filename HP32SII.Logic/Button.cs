@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HP32SII.Logic.States;
+using System;
 
 namespace HP32SII.Logic
 {

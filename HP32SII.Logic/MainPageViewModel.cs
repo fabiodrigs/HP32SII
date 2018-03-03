@@ -1,6 +1,8 @@
 ﻿using GalaSoft.MvvmLight;
 using System;
 using System.Windows.Input;
+using HP32SII.Logic.EscapeModes;
+using HP32SII.Logic.States;
 using Xamarin.Forms;
 
 namespace HP32SII.Logic
@@ -81,7 +83,7 @@ namespace HP32SII.Logic
 
         private void HandleLeftArrow()
         {
-            if (!(state is WaitForDefaultState))
+            if (!(state is WaitForDefault))
             {
                 timer.StartWithInactivityInterval();
             }
@@ -91,7 +93,7 @@ namespace HP32SII.Logic
 
         private void HandleRightArrow()
         {
-            if (!(state is WaitForDefaultState))
+            if (!(state is WaitForDefault))
             {
                 timer.StartWithInactivityInterval();
             }
@@ -101,7 +103,7 @@ namespace HP32SII.Logic
 
         private void HandleButton(Button button)
         {
-            if (!(state is WaitForDefaultState))
+            if (!(state is WaitForDefault))
             {
                 timer.StartWithInactivityInterval();
             }

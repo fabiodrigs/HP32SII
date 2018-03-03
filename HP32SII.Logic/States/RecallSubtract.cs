@@ -1,10 +1,12 @@
-﻿namespace HP32SII.Logic
+﻿using HP32SII.Logic.EscapeModes;
+
+namespace HP32SII.Logic.States
 {
-    class StoreSubtractState : State
+    class RecallSubtract : State
     {
-        public StoreSubtractState() : base()
+        public RecallSubtract() : base()
         {
-            Display = $"STO -  _";
+            Display = $"RCL -  _";
         }
 
         public override State HandleButton(Button button, EscapeMode escapeMode)
@@ -12,10 +14,10 @@
             if (button.Letter != null)
             {
                 BottomStatus = "";
-                Display = $"STO -  {button.Letter}";
+                Display = $"RCL -  {button.Letter}";
                 var storedValue = calculator.Recall(button.Letter);
-                calculator.Store(button.Letter, storedValue - output.ToDouble());
-                return new WaitForDefaultState();
+                output.FromDouble(output.ToDouble() - storedValue);
+                return new WaitForDefault();
             }
             else if (button == Buttons.Clear)
             {
@@ -24,11 +26,11 @@
             }
             else if (button == Buttons.Back)
             {
-                return new StoreState();
+                return new RecallState();
             }
             else if (button == Buttons.Solve)
             {
-                Display = $"STO - (i)";
+                Display = $"RCL - (i)";
                 return new WaitForInvalidI();
             }
             else

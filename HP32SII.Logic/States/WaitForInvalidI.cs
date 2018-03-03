@@ -1,6 +1,6 @@
-﻿using System;
+﻿using HP32SII.Logic.EscapeModes;
 
-namespace HP32SII.Logic
+namespace HP32SII.Logic.States
 {
     class WaitForInvalidI : State
     {

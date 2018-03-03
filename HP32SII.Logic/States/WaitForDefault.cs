@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using HP32SII.Logic.EscapeModes;
 
-namespace HP32SII.Logic
+namespace HP32SII.Logic.States
 {
-    public sealed class WaitForDefaultState : State
+    public sealed class WaitForDefault : State
     {
-        public WaitForDefaultState() : base()
+        public WaitForDefault() : base()
         {
             Timer.StartWithDisplayLetterInterval();
         }

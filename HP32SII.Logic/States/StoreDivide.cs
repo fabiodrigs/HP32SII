@@ -1,10 +1,12 @@
-﻿namespace HP32SII.Logic
+﻿using HP32SII.Logic.EscapeModes;
+
+namespace HP32SII.Logic.States
 {
-    class StoreAddState : State
+    class StoreDivide : State
     {
-        public StoreAddState() : base()
+        public StoreDivide() : base()
         {
-            Display = $"STO +  _";
+            Display = $"STO /  _";
         }
 
         public override State HandleButton(Button button, EscapeMode escapeMode)
@@ -12,10 +14,17 @@
             if (button.Letter != null)
             {
                 BottomStatus = "";
-                Display = $"STO +  {button.Letter}";
+                Display = $"STO /  {button.Letter}";
                 var storedValue = calculator.Recall(button.Letter);
-                calculator.Store(button.Letter, storedValue + output.ToDouble());
-                return new WaitForDefaultState();
+                if (output.ToDouble() == 0.0)
+                {
+                    return new DivideByZero();
+                }
+                else
+                {
+                    calculator.Store(button.Letter, storedValue / output.ToDouble());
+                    return new WaitForDefault();
+                }
             }
             else if (button == Buttons.Clear)
             {
@@ -28,7 +37,7 @@
             }
             else if (button == Buttons.Solve)
             {
-                Display = $"STO + (i)";
+                Display = $"STO / (i)";
                 return new WaitForInvalidI();
             }
             else
