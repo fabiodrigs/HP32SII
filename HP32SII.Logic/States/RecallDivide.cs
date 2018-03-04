@@ -45,10 +45,5 @@ namespace HP32SII.Logic.States
                 return this;
             }
         }
-
-        public override State TimerElapsed()
-        {
-            return new OffState();
-        }
     }
 }

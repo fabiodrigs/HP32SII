@@ -18,5 +18,10 @@ namespace HP32SII.Logic.States
         {
             return new InvalidI();
         }
+
+        public override bool IsWaiting()
+        {
+            return true;
+        }
     }
 }

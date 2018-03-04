@@ -4,11 +4,13 @@ using System.Windows.Input;
 using HP32SII.Logic.EscapeModes;
 using HP32SII.Logic.States;
 using Xamarin.Forms;
+using Plugin.Battery;
 
 namespace HP32SII.Logic
 {
     public class MainPageViewModel : ViewModelBase
     {
+        private bool isOn = true;
         private Timer timer;
 
         private EscapeMode escapeMode;
@@ -49,6 +51,20 @@ namespace HP32SII.Logic
             private set { Set(ref isBottomStatusVisible, value); }
         }
 
+        private string batteryStatus = "";
+        public string BatteryStatus
+        {
+            get { return batteryStatus; }
+            private set { Set(ref batteryStatus, value); }
+        }
+
+        private bool isBatteryStatusVisible = true;
+        public bool IsBatteryStatusVisible
+        {
+            get { return isBatteryStatusVisible; }
+            private set { Set(ref isBatteryStatusVisible, value); }
+        }
+
         private string display = " 0";
         public string Display
         {
@@ -66,8 +82,8 @@ namespace HP32SII.Logic
         #region Constructor
         public MainPageViewModel()
         {
-            LeftArrowCommand = new Command(HandleLeftArrow, IsStateOn);
-            RightArrowCommand = new Command(HandleRightArrow, IsStateOn);
+            LeftArrowCommand = new Command(HandleLeftArrow, () => isOn);
+            RightArrowCommand = new Command(HandleRightArrow, () => isOn);
             ButtonCommand = new Command<Button>(HandleButton, IsButtonEnabled);
 
             timer = new Timer(TimerElapsed);
@@ -78,47 +94,70 @@ namespace HP32SII.Logic
 
             escapeMode = new NoEscapeMode();
             state = new DefaultState();
+            UpdateDisplay();
         }
         #endregion
 
         private void HandleLeftArrow()
         {
-            if (!(state is WaitForDefault))
-            {
-                timer.StartWithInactivityInterval();
-            }
+            RestartTimerIfStateNotWaiting();
             escapeMode = escapeMode.HandleLeftArrow();
             TopStatus = EscapeMode.TopStatus;
         }
 
         private void HandleRightArrow()
         {
-            if (!(state is WaitForDefault))
-            {
-                timer.StartWithInactivityInterval();
-            }
+            RestartTimerIfStateNotWaiting();
             escapeMode = escapeMode.HandleRightArrow();
             TopStatus = EscapeMode.TopStatus;
         }
 
         private void HandleButton(Button button)
         {
-            if (!(state is WaitForDefault))
+            if (isOn)
             {
-                timer.StartWithInactivityInterval();
+                if (IsTurningOff(button))
+                {
+                    TurnOff();
+                }
+                else
+                {
+                    RestartTimerIfStateNotWaiting();
+                    state = state.HandleButton(button, escapeMode);
+                }
+            }
+            else
+            {
+                if (button == Buttons.Clear)
+                {
+                    TurnOn();
+                }
             }
 
-            state = state.HandleButton(button, escapeMode);
             escapeMode = new NoEscapeMode();
-
             UpdateDisplay();
-
         }
 
         private void TimerElapsed()
         {
-            state = state.TimerElapsed();
+            if (state.IsWaiting())
+            {
+                state = state.TimerElapsed();
+            }
+            else
+            {
+                TurnOff();
+            }
+
             UpdateDisplay();
+        }
+
+        private void RestartTimerIfStateNotWaiting()
+        {
+            if (!state.IsWaiting())
+            {
+                timer.StartWithInactivityInterval();
+            }
         }
 
         private void UpdateDisplay()
@@ -126,9 +165,7 @@ namespace HP32SII.Logic
             TopStatus = EscapeMode.TopStatus;
             Display = State.Display;
             BottomStatus = State.BottomStatus;
-            IsDisplayVisible = State.IsDisplayVisible;
-            IsTopStatusVisible = State.IsTopStatusVisible;
-            IsBottomStatusVisible = State.IsBottomStatusVisible;
+            BatteryStatus = CrossBattery.Current.RemainingChargePercent <= 92 ? "BAT" : "";
         }
 
         private bool IsButtonEnabled(Button button)
@@ -136,12 +173,53 @@ namespace HP32SII.Logic
             if (button == Buttons.Clear)
                 return true;
             else
-                return IsStateOn();
+                return isOn;
         }
 
-        private bool IsStateOn()
+        private bool IsTurningOff(Button button)
         {
-            return !(state is OffState);
+            if (escapeMode is LeftEscapeMode || escapeMode is RightEscapeMode)
+            {
+                return button == Buttons.Clear;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private void TurnOff()
+        {
+            if (state.IsWaiting())
+            {
+                state.TimerElapsed();
+            }
+            timer.Stop();
+            TurnScreenOff();
+            isOn = false;
+        }
+
+        private void TurnOn()
+        {
+            timer.StartWithInactivityInterval();
+            TurnScreenOn();
+            isOn = true;
+        }
+
+        private void TurnScreenOff()
+        {
+            IsDisplayVisible = false;
+            IsTopStatusVisible = false;
+            IsBottomStatusVisible = false;
+            IsBatteryStatusVisible = false;
+        }
+
+        private void TurnScreenOn()
+        {
+            IsDisplayVisible = true;
+            IsTopStatusVisible = true;
+            IsBottomStatusVisible = true;
+            IsBatteryStatusVisible = true;
         }
     }
 }

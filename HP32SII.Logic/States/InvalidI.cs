@@ -22,10 +22,5 @@ namespace HP32SII.Logic.States
                 return new DefaultState().HandleButton(button, escapeMode);
             }
         }
-
-        public override State TimerElapsed()
-        {
-            return new OffState();
-        }
     }
 }

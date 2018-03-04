@@ -9,13 +9,9 @@ namespace HP32SII.Logic.States
         protected static Output output = new Output();
         protected static bool pushAtNextAppend = false;
 
-        public static string Display { get; protected set; } = "";
+        public static string Display { get; protected set; } = "0";
         public static string BottomStatus { get; protected set; } = "";
 
-        public static bool IsDisplayVisible { get; protected set; } = true;
-        public static bool IsTopStatusVisible { get; protected set; } = true;
-        public static bool IsBottomStatusVisible { get; protected set; } = true;
-        
         private static Timer timer = null;
         public static Timer Timer
         {
@@ -30,30 +26,24 @@ namespace HP32SII.Logic.States
             set => buttons = buttons == null ? value : throw new InvalidOperationException("Buttons has already been assigned");
         }
 
-        protected static void TurnScreenOff()
-        {
-            IsDisplayVisible = false;
-            IsTopStatusVisible = false;
-            IsBottomStatusVisible = false;
-        }
-
-        protected static void TurnScreenOn()
-        {
-            IsDisplayVisible = true;
-            IsTopStatusVisible = true;
-            IsBottomStatusVisible = true;
-        }
-
         public State()
         {
             if (timer == null)
-                throw new InvalidOperationException("timer not initialized");
+                throw new InvalidOperationException("Timer not initialized");
             if (buttons == null)
-                throw new InvalidOperationException("buttons not initialized");
+                throw new InvalidOperationException("Buttons not initialized");
         }
 
         public abstract State HandleButton(Button button, EscapeMode escapeMode);
+    
+        public virtual State TimerElapsed()
+        {
+            throw new InvalidOperationException("Unexpected timer elapsed");
+        }
 
-        public abstract State TimerElapsed();
+        public virtual bool IsWaiting()
+        {
+            return false;
+        }
     }
 }

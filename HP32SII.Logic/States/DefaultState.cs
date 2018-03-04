@@ -137,8 +137,8 @@ namespace HP32SII.Logic.States
             Buttons.Subtract.RightOperation = DoNothing;
 
             Buttons.Clear.DefaultOperation = Clear;
-            Buttons.Clear.LeftOperation = TurnOff;
-            Buttons.Clear.RightOperation = TurnOff;
+            Buttons.Clear.LeftOperation = ThrowException;   
+            Buttons.Clear.RightOperation = ThrowException;
 
             Buttons.Zero.DefaultOperation = numeric.Compose(Buttons.Zero.Name);
             Buttons.Zero.LeftOperation = DoNothing;
@@ -155,6 +155,11 @@ namespace HP32SII.Logic.States
             Buttons.Add.DefaultOperation = dyadic.Compose(calculator.Add);
             Buttons.Add.LeftOperation = DoNothing;
             Buttons.Add.RightOperation = DoNothing;
+        }
+
+        private static State ThrowException()
+        {
+            throw new InvalidOperationException("Unexpected key");
         }
 
         private static State DoNothing()
@@ -212,13 +217,6 @@ namespace HP32SII.Logic.States
             output.Clear();
             Display = output.ToString();
             return new DefaultState();
-        }
-
-        private static State TurnOff()
-        {
-            Timer.Stop();
-            TurnScreenOff();
-            return new OffState();
         }
 
         private static State Backspace()
@@ -282,11 +280,6 @@ namespace HP32SII.Logic.States
                 default:
                     throw new InvalidOperationException("Unexpected escape mode");
             }
-        }
-
-        public override State TimerElapsed()
-        {
-            return new OffState();
         }
     }
 }

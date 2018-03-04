@@ -20,5 +20,10 @@ namespace HP32SII.Logic.States
             Timer.StartWithInactivityInterval();
             return new DefaultState();
         }
+
+        public override bool IsWaiting()
+        {
+            return true;
+        }
     }
 }
