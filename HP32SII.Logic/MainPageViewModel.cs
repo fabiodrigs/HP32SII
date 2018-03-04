@@ -10,6 +10,8 @@ namespace HP32SII.Logic
 {
     public class MainPageViewModel : ViewModelBase
     {
+        private int BatteryLowThreshold = 15;
+
         private bool isOn = true;
         private Timer timer;
 
@@ -165,7 +167,7 @@ namespace HP32SII.Logic
             TopStatus = EscapeMode.TopStatus;
             Display = State.Display;
             BottomStatus = State.BottomStatus;
-            BatteryStatus = CrossBattery.Current.RemainingChargePercent <= 92 ? "BAT" : "";
+            BatteryStatus = CrossBattery.Current.RemainingChargePercent < BatteryLowThreshold ? "BAT" : "";
         }
 
         private bool IsButtonEnabled(Button button)
