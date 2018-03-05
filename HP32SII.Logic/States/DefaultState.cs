@@ -232,6 +232,7 @@ namespace HP32SII.Logic.States
 
         private static State MonadicOperation(Func<double, double> operation)
         {
+            output.Freeze();
             pushAtNextAppend = true;
             var result = operation(output.ToDouble());
             output.FromDouble(result);
@@ -241,6 +242,7 @@ namespace HP32SII.Logic.States
 
         private static State DyadicOperation(Func<double, double> operation)
         {
+            output.Freeze();
             pushAtNextAppend = false;
             var result = operation(output.ToDouble());
             output.FromDouble(result);
@@ -250,6 +252,7 @@ namespace HP32SII.Logic.States
 
         private static State DyadicOperationWithErrorState<T>(Func<double, double> operation) where T : State, new()
         {
+            output.Freeze();
             pushAtNextAppend = false;
             var result = operation(output.ToDouble());
             if (double.IsNaN(result))
