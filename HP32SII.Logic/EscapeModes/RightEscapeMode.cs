@@ -16,5 +16,10 @@
         {
             return new NoEscapeMode();
         }
+
+        public override bool IsEscaped()
+        {
+            return true;
+        }
     }
 }

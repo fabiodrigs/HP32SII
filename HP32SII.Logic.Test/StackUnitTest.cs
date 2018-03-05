@@ -84,6 +84,22 @@ namespace HP32SII.Logic.Test
         }
 
         [Test]
+        public void TestRoot()
+        {
+            var expected = Math.Pow(y, x);
+            var result = stackUnit.Power(x);
+
+            Assert.That(expected, Is.EqualTo(result));
+        }
+
+        [Test]
+        public void TestRootZero()
+        {
+            var result = stackUnit.Root(0.0);
+            Assert.That(double.NaN, Is.EqualTo(result));
+        }
+
+        [Test]
         public void TestSwap()
         {
             var expected = y;

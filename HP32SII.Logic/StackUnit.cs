@@ -36,6 +36,11 @@ namespace HP32SII.Logic
             return Math.Pow(Pop(), x);
         }
 
+        public double Root(double x)
+        {
+            return x == 0.0 ? double.NaN : Math.Pow(Pop(), 1 / x);
+        }
+
         public double Swap(double x)
         {
             var y = Pop();

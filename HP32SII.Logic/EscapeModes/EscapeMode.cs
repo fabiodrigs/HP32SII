@@ -6,5 +6,6 @@
 
         public abstract EscapeMode HandleLeftArrow();
         public abstract EscapeMode HandleRightArrow();
+        public abstract bool IsEscaped();
     }
 }

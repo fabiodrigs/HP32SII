@@ -180,14 +180,10 @@ namespace HP32SII.Logic
 
         private bool IsTurningOff(Button button)
         {
-            if (escapeMode is LeftEscapeMode || escapeMode is RightEscapeMode)
-            {
+            if (escapeMode.IsEscaped())
                 return button == Buttons.Clear;
-            }
             else
-            {
                 return false;
-            }
         }
 
         private void TurnOff()

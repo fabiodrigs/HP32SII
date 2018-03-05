@@ -5,15 +5,13 @@ namespace HP32SII.Logic.States
 {
     public sealed class DefaultState : State
     {
-        public DefaultState() : base()
-        {
-            BottomStatus = "";
-        }
-
         public static void AssignButtonOperations()
         {
             Func<Func<double, double>, State> monadic = MonadicOperation;
             Func<Func<double, double>, State> dyadic = DyadicOperation;
+            Func<Func<double, double>, State> dyadicWithDivideByZero = DyadicOperationWithErrorState<DivideByZero>;
+            Func<Func<double, double>, State> dyadicWithInvalidRoot = DyadicOperationWithErrorState<InvalidRoot>;
+
             Func<string, State> numeric = NumericKey;
 
             Buttons.Sqrt.DefaultOperation = monadic.Compose(calculator.SquareRoot);
@@ -29,7 +27,7 @@ namespace HP32SII.Logic.States
             Buttons.Ln.RightOperation = monadic.Compose(calculator.LogBase10);
 
             Buttons.Pow.DefaultOperation = dyadic.Compose(calculator.Power);
-            Buttons.Pow.LeftOperation = DoNothing;
+            Buttons.Pow.LeftOperation = dyadicWithInvalidRoot.Compose(calculator.Root);
             Buttons.Pow.RightOperation = DoNothing;
 
             Buttons.Invert.DefaultOperation = monadic.Compose(calculator.Invert);
@@ -100,7 +98,7 @@ namespace HP32SII.Logic.States
             Buttons.Nine.LeftOperation = DoNothing;
             Buttons.Nine.RightOperation = DoNothing;
 
-            Buttons.Divide.DefaultOperation = dyadic.Compose(calculator.Divide);
+            Buttons.Divide.DefaultOperation = dyadicWithDivideByZero.Compose(calculator.Divide);
             Buttons.Divide.LeftOperation = DoNothing;
             Buttons.Divide.RightOperation = DoNothing;
 
@@ -155,6 +153,11 @@ namespace HP32SII.Logic.States
             Buttons.Add.DefaultOperation = dyadic.Compose(calculator.Add);
             Buttons.Add.LeftOperation = DoNothing;
             Buttons.Add.RightOperation = DoNothing;
+        }
+
+        public DefaultState() : base()
+        {
+            BottomStatus = "";
         }
 
         private static State ThrowException()
@@ -243,6 +246,22 @@ namespace HP32SII.Logic.States
             output.FromDouble(result);
             Display = output.ToString();
             return new DefaultState();
+        }
+
+        private static State DyadicOperationWithErrorState<T>(Func<double, double> operation) where T : State, new()
+        {
+            pushAtNextAppend = false;
+            var result = operation(output.ToDouble());
+            if (double.IsNaN(result))
+            {
+                return new T();
+            }
+            else
+            {
+                output.FromDouble(result);
+                Display = output.ToString();
+                return new DefaultState();
+            }
         }
 
         private static State Store()

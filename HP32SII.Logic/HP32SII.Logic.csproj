@@ -53,6 +53,7 @@
     <Compile Include="StackUnit.cs" />
     <Compile Include="KeyboardState.cs" />
     <Compile Include="States\DefaultState.cs" />
+    <Compile Include="States\InvalidRoot.cs" />
     <Compile Include="States\DivideByZero.cs" />
     <Compile Include="States\InvalidI.cs" />
     <Compile Include="States\RecallAdd.cs" />

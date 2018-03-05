@@ -53,6 +53,11 @@ namespace HP32SII.Logic
             return stackUnit.Power(x);
         }
 
+        public double Root(double x)
+        {
+            return stackUnit.Root(x);
+        }
+
         public double Swap(double x)
         {
             return stackUnit.Swap(x);

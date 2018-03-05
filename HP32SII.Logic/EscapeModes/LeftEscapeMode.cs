@@ -16,5 +16,10 @@
         {
             return new RightEscapeMode();
         }
+
+        public override bool IsEscaped()
+        {
+            return true;
+        }
     }
 }
