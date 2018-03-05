@@ -89,8 +89,13 @@ namespace HP32SII.Logic
         public void Freeze()
         {
             IsEditable = false;
+            TrimLeadingZeros();
         }
 
+        private void TrimLeadingZeros()
+        {
+            number = int.Parse(number).ToString();
+        }
 
         public void FromString(string output)
         {
